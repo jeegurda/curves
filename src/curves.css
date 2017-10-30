@@ -1,0 +1,122 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  height: 500px;
+  background: #f3f3f3;
+  position: relative;
+  flex: 0 0 500px;
+
+  &.no-transition {
+    .pin {
+      transition: none;
+    }
+    path,
+    circle {
+      transition: none;
+    }
+  }
+}
+
+.le-path {
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 2;
+  fill: none;
+  transition: d var(--speed);
+}
+
+.supp-path {
+  stroke: rgba(240, 0, 0, 0.6);
+  fill: none;
+  transition: d var(--speed);
+  stroke-dasharray: 8 5;
+}
+
+.cast-path {
+  stroke: rgba(1, 110, 1, 0.6);
+  fill: none;
+  transition: d var(--speed);
+  stroke-dasharray: 8 5;
+}
+
+.cast-top-path {
+  stroke: rgba(200, 114, 0, 0.8);
+  fill: none;
+  transition: d var(--speed);
+  stroke-dasharray: 8 5;
+}
+
+.marker {
+  fill: rgba(0, 0, 0, 0.2);
+  transition: cx var(--speed), cy var(--speed);
+
+  &#marker-cast-top-path {
+    fill: rgba(0, 0, 240, 0.8)
+  }
+}
+
+.grid {
+  path {
+    stroke-width: 1;
+    stroke: rgba(0, 0, 0, 0.05);
+  }
+}
+
+:root {
+  --speed: 0.2s;
+}
+
+.pin {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(0, 0, 200, 0.3);
+  cursor: pointer;
+  left: 0;
+  top: 0;
+  transition: transform var(--speed), background var(--speed);
+
+  &:hover {
+    background: rgba(0, 0, 200, 0.5);
+  }
+
+  &:after {
+    content: attr(data-coords);
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    font-size: 12px;
+    white-space: nowrap;
+    transform: translate(-50%, 0);
+    padding: 5px 10px;
+  }
+}
+
+.layout {
+  display: flex;
+}
+
+.input {
+  padding: 50px 0;
+}
+
+.view {
+  padding: 50px 0;
+}
+
+.opt-line {
+  margin-bottom: 30px;
+  padding: 0 50px;
+}
+
+h3 {
+  margin: 0;
+}
+
+.t-input-labels {
+  display: flex;
+  justify-content: space-between;
+}

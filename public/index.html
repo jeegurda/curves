@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Curves</title>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="container">
+        <svg viewbox="0 0 500 500">
+          <g class="grid"></g>
+          <path id="le-path" class="le-path"/>
+
+          <circle id="marker-supp-path-0" class="marker" r="4"/>
+          <circle id="marker-supp-path-1" class="marker" r="4"/>
+          <circle id="marker-supp-path-2" class="marker" r="4"/>
+          <circle id="marker-cast-path-0" class="marker" r="4"/>
+          <circle id="marker-cast-path-1" class="marker" r="4"/>
+          <circle id="marker-cast-top-path" class="marker" r="4"/>
+
+          <path id="supp-path-0" class="supp-path"/>
+          <path id="supp-path-1" class="supp-path"/>
+          <path id="supp-path-2" class="supp-path"/>
+
+          <path id="cast-path-0" class="cast-path"/>
+          <path id="cast-path-1" class="cast-path"/>
+          <path id="cast-top-path" class="cast-top-path"/>
+        </svg>
+        <div data-id="0" class="pin pin-0"></div>
+        <div data-id="1" class="pin pin-1"></div>
+        <div data-id="2" class="pin pin-2"></div>
+        <div data-id="3" class="pin pin-3"></div>
+      </div>
+      <div class="input">
+        <div class="opt-line">
+          <h3>Input</h3>
+        </div>
+        <div class="opt-line">
+          <p>T<sub>0</sub></p>
+          <input type="range" id="t-input" min="0" max="100" value="50">
+          <div class="t-input-labels">
+            <span>0</span>
+            <span>0.5</span>
+            <span>1</span>
+          </div>
+        </div>
+        <div class="opt-line">
+          <button id="randomize">Randomize points</button>
+        </div>
+      </div>
+      <div class="view">
+        <div class="opt-line">
+          <h3>View</h3>
+        </div>
+        <div class="opt-line">
+          <p>Width</p>
+          <input type="range" id="width-input" min="1" max="50" value="2">
+        </div>
+      </div>
+    </div>
+
+    <script src="%PUBLIC_URL%/static/js/index.js"></script>
+  </body>
+</html>
