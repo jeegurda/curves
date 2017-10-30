@@ -1,6 +1,3 @@
-// TODO:
-// - one dimension arrays?
-
 import './curves.css'
 
 import * as dom from './dom'
@@ -11,23 +8,49 @@ const width = 500
 const height = 500
 const columns = 10
 const rows = 10
-let normal = [
+const precision = 3
+const normal = [
   [80, 300],
   [150, 50],
   [350, 50],
   [400, 300]
 ]
+
 let pts = [
   [null, null],
   [null, null],
   [null, null],
   [null, null]
 ]
+// the fuck?
 pts = normal
+let segments = 1
 let id = null
 let start = {x: null, y: null}
 let startPts = {x: null, y: null}
-let castT = Number(dom.tInput.value) / 100 // 0 -- 1
+let castT = Number(dom.tInput.value) / Math.pow(10, precision) // 0 -- 1
+
+dom.save.addEventListener('click', () => {
+  localStorage.pts = JSON.stringify(pts)
+  dom.load.removeAttribute('disabled')
+})
+
+dom.load.addEventListener('click', () => {
+  try {
+    pts = JSON.parse(localStorage.pts)
+    build()
+  } catch (e) {
+    delete localStorage.pts
+    dom.load.setAttribute('disabled', '')
+  }
+})
+
+try {
+  JSON.parse(localStorage.pts)
+} catch (e) {
+  delete localStorage.pts
+  dom.load.setAttribute('disabled', '')
+}
 
 document.addEventListener('mousemove', e => {
   if (!(e.buttons & leftButtonBitMask) || id === null) {
@@ -38,6 +61,7 @@ document.addEventListener('mousemove', e => {
 
   setPin(id)
   setPath()
+  setFlattenedPath()
   setCast()
 })
 
@@ -66,6 +90,7 @@ dom.pins.forEach(pin => {
 
       setPin(id)
       setPath()
+      setFlattenedPath()
       setCast()
 
       id = null
@@ -90,21 +115,7 @@ const setPin = index => {
   }
 }
 
-const setCast = () => {
-  cPts.forEach((cPt, i) => {
-    const cath0 = (pts[i + 1][0] - pts[i][0]) * castT
-    const cath1 = (pts[i + 1][1] - pts[i][1]) * castT
-    cPt[0] = pts[i][0] + cath0
-    cPt[1] = pts[i][1] + cath1
-  })
-
-  cTopPts.forEach((cTopPt, i) => {
-    const cath0 = (cPts[i + 1][0] - cPts[i][0]) * castT
-    const cath1 = (cPts[i + 1][1] - cPts[i][1]) * castT
-    cTopPt[0] = cPts[i][0] + cath0
-    cTopPt[1] = cPts[i][1] + cath1
-  })
-
+const buildCast = () => {
   dom.cast0.setAttribute('d', `M ${cPts[0][0]} ${cPts[0][1]} L ${cPts[1][0]} ${cPts[1][1]}`)
   dom.cast1.setAttribute('d', `M ${cPts[1][0]} ${cPts[1][1]} L ${cPts[2][0]} ${cPts[2][1]}`)
   dom.supp0Marker.setAttribute('cx', cPts[0][0])
@@ -120,11 +131,41 @@ const setCast = () => {
   dom.cast1Marker.setAttribute('cx', cTopPts[1][0])
   dom.cast1Marker.setAttribute('cy', cTopPts[1][1])
 
-  const cath0 = (cTopPts[1][0] - cTopPts[0][0]) * castT
-  const cath1 = (cTopPts[1][1] - cTopPts[0][1]) * castT
+  dom.castTopMarker.setAttribute('cx', cTopValuePt[0])
+  dom.castTopMarker.setAttribute('cy', cTopValuePt[1])
+}
 
-  dom.castTopMarker.setAttribute('cx', cTopPts[0][0] + cath0)
-  dom.castTopMarker.setAttribute('cy', cTopPts[0][1] + cath1)
+const setCast = _castT => {
+  let buildNeeded = false
+
+  if (typeof _castT === 'undefined') {
+    _castT = castT
+    buildNeeded = true
+  }
+
+  cPts.forEach((cPt, i) => {
+    const cath0 = (pts[i + 1][0] - pts[i][0]) * _castT
+    const cath1 = (pts[i + 1][1] - pts[i][1]) * _castT
+    cPt[0] = pts[i][0] + cath0
+    cPt[1] = pts[i][1] + cath1
+  })
+
+  cTopPts.forEach((cTopPt, i) => {
+    const cath0 = (cPts[i + 1][0] - cPts[i][0]) * _castT
+    const cath1 = (cPts[i + 1][1] - cPts[i][1]) * _castT
+    cTopPt[0] = cPts[i][0] + cath0
+    cTopPt[1] = cPts[i][1] + cath1
+  })
+
+  const cath0 = (cTopPts[1][0] - cTopPts[0][0]) * _castT
+  const cath1 = (cTopPts[1][1] - cTopPts[0][1]) * _castT
+  cTopValuePt[0] = cTopPts[0][0] + cath0
+  cTopValuePt[1] = cTopPts[0][1] + cath1
+
+  if (buildNeeded) {
+    buildCast()
+  }
+  // no return value: cPts, cTopPts and cTopValuePt should be mutated
 }
 
 const setPath = () => {
@@ -138,12 +179,28 @@ const setPath = () => {
   )
 }
 
+const setFlattenedPath = () => {
+  let path = `M ${pts[0][0]} ${pts[0][1]}`
+
+  let t = 0
+  // we know last point's coordinates so we can skip one last iteration
+  for (let i = 0; i < segments - 1; i++) {
+    t += 1 / segments
+    setCast(t) // mutate cast coordinates
+    path += ' L ' + cTopValuePt.join(' ')
+  }
+
+  path += ` L ${pts[3][0]} ${pts[3][1]}`
+  dom.flattenedPath.setAttribute('d', path)
+}
+
 dom.widthInput.addEventListener('input', e => {
   setWidth()
 })
 
 dom.tInput.addEventListener('input', e => {
-  castT = Number(e.target.value) / 100
+  castT = Number(e.target.value) / Math.pow(10, precision)
+  dom.tValue.innerHTML = castT.toFixed(precision - 1)
   setCast()
 })
 dom.tInput.addEventListener('mousedown', e => {
@@ -173,6 +230,9 @@ let cTopPts = [
   [null, null]
 ]
 
+let cTopValuePt =
+  [null, null]
+
 const buildGrid = () => {
   for (let i = 0; i < height; i += height / rows) {
     let line = document.createElementNS(ns, 'path')
@@ -186,9 +246,41 @@ const buildGrid = () => {
   }
 }
 
+const updateSegmentsInput = () => {
+  dom.segmentsInput.value = segments
+}
+
+const prepareFlattenedPath = () => {
+  if (segments > 1) {
+    dom.path.classList.add('hidden')
+    dom.flattenedPath.classList.remove('hidden')
+  } else {
+    dom.path.classList.remove('hidden')
+    dom.flattenedPath.classList.add('hidden')
+  }
+}
+
+dom.segmentsIncrease.addEventListener('click', () => {
+  segments++
+  updateSegmentsInput()
+  prepareFlattenedPath()
+  setFlattenedPath()
+})
+
+dom.segmentsDecrease.addEventListener('click', () => {
+  segments--
+  if (segments < 1) {
+    segments = 1
+  }
+  updateSegmentsInput()
+  prepareFlattenedPath()
+  setFlattenedPath()
+})
+
 const build = () => {
   setPin()
   setPath()
+  setFlattenedPath()
   setCast()
 }
 
@@ -196,7 +288,12 @@ dom.randomize.addEventListener('click', () => {
   randomizePts()
   build()
 })
+
 setWidth()
 build()
-
 buildGrid()
+
+updateSegmentsInput()
+prepareFlattenedPath()
+
+dom.container.classList.add('loaded')

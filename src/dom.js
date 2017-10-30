@@ -1,4 +1,5 @@
-export const path = document.querySelector('#le-path')
+export const path = document.querySelector('.path')
+export const flattenedPath = document.querySelector('.flattened-path')
 export const grid = document.querySelector('.grid')
 export const supp0 = document.querySelector('#supp-path-0')
 export const supp0Marker = document.querySelector('#marker-supp-path-0')
@@ -15,7 +16,15 @@ export const castTopMarker = document.querySelector('#marker-cast-top-path')
 
 export const widthInput = document.querySelector('#width-input')
 export const tInput = document.querySelector('#t-input')
+export const tValue = document.querySelector('#t-value')
+
+export const save = document.querySelector('#save')
+export const load = document.querySelector('#load')
 
 export const container = document.querySelector('.container')
 export const randomize = document.querySelector('#randomize')
 export const pins = Array.from(document.querySelectorAll('.pin'))
+
+export const segmentsIncrease = document.querySelector('.segments-increase')
+export const segmentsDecrease = document.querySelector('.segments-decrease')
+export const segmentsInput = document.querySelector('.segments-input')

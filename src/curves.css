@@ -18,31 +18,71 @@ body {
       transition: none;
     }
   }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &.loaded {
+    .loading {
+      display: none;
+    }
+  }
 }
 
-.le-path {
+.hidden {
+  display: none;
+}
+
+.loading {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+
+  span {
+    margin: auto;
+  }
+}
+
+.path {
   stroke: rgba(0, 0, 0, 0.8);
   stroke-width: 2;
   fill: none;
   transition: d var(--speed);
+  stroke-linecap: round;
+}
+
+.flattened-path {
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 1;
+  stroke-dasharray: 2;
+  fill: none;
+  transition: d var(--speed);
+  stroke-linecap: round;
 }
 
 .supp-path {
-  stroke: rgba(240, 0, 0, 0.6);
+  stroke: rgba(240, 0, 0, 0.4);
   fill: none;
   transition: d var(--speed);
   stroke-dasharray: 8 5;
 }
 
 .cast-path {
-  stroke: rgba(1, 110, 1, 0.6);
+  stroke: rgba(1, 110, 1, 0.4);
   fill: none;
   transition: d var(--speed);
   stroke-dasharray: 8 5;
 }
 
 .cast-top-path {
-  stroke: rgba(200, 114, 0, 0.8);
+  stroke: rgba(200, 114, 0, 0.4);
   fill: none;
   transition: d var(--speed);
   stroke-dasharray: 8 5;
@@ -75,12 +115,19 @@ body {
   border-radius: 50%;
   background: rgba(0, 0, 200, 0.3);
   cursor: pointer;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
   left: 0;
   top: 0;
   transition: transform var(--speed), background var(--speed);
 
   &:hover {
     background: rgba(0, 0, 200, 0.5);
+  }
+
+  &:active {
+    cursor: -webkit-grabbing;
+    cursor: -moz-grabbing;
   }
 
   &:after {
@@ -100,23 +147,69 @@ body {
 }
 
 .input {
-  padding: 50px 0;
+  flex: 400px 0 0;
+  border-right: 1px solid rgba(0, 0, 0, 0.1)
 }
 
 .view {
-  padding: 50px 0;
+  /*padding: 50px 0;*/
+  border-right: 1px solid rgba(0, 0, 0, 0.1)
 }
 
 .opt-line {
-  margin-bottom: 30px;
-  padding: 0 50px;
+  /*margin-bottom: 20px;*/
+  padding: 25px 50px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1)
 }
 
 h3 {
+  margin: -10px 0;
+  color: rgba(0, 0, 0, 0.5);
+  font-weight: normal;
+}
+
+h4 {
+  margin: 0 0 10px;
+  color: rgba(0, 0, 0, 0.8)
+}
+
+p {
   margin: 0;
+}
+
+#t-input {
+  width: 100%;
+}
+
+.opt-flatten {
+  display: flex;
+  align-items: center;
+
+  p {
+    margin-right: 20px;
+  }
+
+  input {
+    width: 50px;
+    font-size: 14px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    margin-right: 10px;
+  }
+
+  button {
+    width: 70px;
+    font-size: 18px;
+  }
 }
 
 .t-input-labels {
   display: flex;
   justify-content: space-between;
+
+  div {
+    position: relative;
+    width: 1px;
+    display: flex;
+    justify-content: center;
+  }
 }
