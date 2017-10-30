@@ -1,5 +1,5 @@
 {
-  "name": "le curves",
+  "name": "le-curves",
   "description": "Le curves",
   "version": "1.0.1",
   "main": "server/index.js",
