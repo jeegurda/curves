@@ -28,3 +28,5 @@ export const pins = Array.from(document.querySelectorAll('.pin'))
 export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
 export const segmentsInput = document.querySelector('.segments-input')
+
+export const vContainer:HTMLElement = document.querySelector('.v-layout')

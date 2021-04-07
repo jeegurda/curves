@@ -1,6 +1,9 @@
-import './curves.css'
+import './curves.scss'
 
 import * as dom from './dom'
+import initVue from './init-vue'
+
+initVue()
 
 const ns = 'http://www.w3.org/2000/svg'
 const leftButtonBitMask = 0b00001
