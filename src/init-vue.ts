@@ -3,16 +3,12 @@ import Root from './Root.vue'
 
 import * as dom from './dom'
 
-const init = () => {
-  console.log('trying to mount vue')
-  
+const init = () => {  
   new Vue({
     el: dom.vContainer,
-    data: {
-      ye: 'ye!'
-    }
+    render: c => c(Root),
+    components: { Root }
   })
 }
 
-
-export default () => {}
+export default init

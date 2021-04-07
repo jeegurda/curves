@@ -1,4 +1,4 @@
-export const path = document.querySelector('.path')
+export const path: HTMLElement = document.querySelector('.path')
 export const flattenedPath = document.querySelector('.flattened-path')
 export const grid = document.querySelector('.grid')
 export const supp0 = document.querySelector('#supp-path-0')
@@ -15,7 +15,7 @@ export const castTop = document.querySelector('#cast-top-path')
 export const castTopMarker = document.querySelector('#marker-cast-top-path')
 
 export const widthInput = document.querySelector('#width-input')
-export const tInput = document.querySelector('#t-input')
+export const tInput: HTMLInputElement = document.querySelector('#t-input')
 export const tValue = document.querySelector('#t-value')
 
 export const save = document.querySelector('#save')
@@ -29,4 +29,4 @@ export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
 export const segmentsInput = document.querySelector('.segments-input')
 
-export const vContainer:HTMLElement = document.querySelector('.v-layout')
+export const vContainer: HTMLElement = document.querySelector('.v-layout')

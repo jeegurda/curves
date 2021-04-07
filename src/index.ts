@@ -141,7 +141,7 @@ const buildCast = () => {
 const setCast = _castT => {
   let buildNeeded = false
 
-  if (typeof _castT === 'undefined') {
+  if (_castT === undefined) {
     _castT = castT
     buildNeeded = true
   }

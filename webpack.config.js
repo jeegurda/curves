@@ -23,8 +23,7 @@ module.exports = {
         ],
       },
       {
-        // Include ts, tsx, js, and jsx files.
-        test: /\.(ts|js)x?$/,
+        test: /\.ts$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
       },
