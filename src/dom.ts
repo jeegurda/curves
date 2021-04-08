@@ -1,32 +1,24 @@
-export const path: HTMLElement = document.querySelector('.path')
-export const flattenedPath = document.querySelector('.flattened-path')
-export const grid = document.querySelector('.grid')
-export const supp0 = document.querySelector('#supp-path-0')
-export const supp0Marker = document.querySelector('#marker-supp-path-0')
-export const supp1 = document.querySelector('#supp-path-1')
-export const supp1Marker = document.querySelector('#marker-supp-path-1')
-export const supp2 = document.querySelector('#supp-path-2')
-export const supp2Marker = document.querySelector('#marker-supp-path-2')
-export const cast0 = document.querySelector('#cast-path-0')
-export const cast0Marker = document.querySelector('#marker-cast-path-0')
-export const cast1 = document.querySelector('#cast-path-1')
-export const cast1Marker = document.querySelector('#marker-cast-path-1')
-export const castTop = document.querySelector('#cast-top-path')
-export const castTopMarker = document.querySelector('#marker-cast-top-path')
+export const svg: SVGElement = document.querySelector('.svg')
+export const curve: SVGElement = document.querySelector('.curve')
+export const grid: SVGElement = document.querySelector('.grid')
 
-export const widthInput = document.querySelector('#width-input')
+export const widthInput: HTMLInputElement = document.querySelector('#width-input')
 export const tInput: HTMLInputElement = document.querySelector('#t-input')
 export const tValue = document.querySelector('#t-value')
 
 export const save = document.querySelector('#save')
 export const load = document.querySelector('#load')
 
-export const container = document.querySelector('.container')
+export const container: HTMLElement = document.querySelector('.container')
 export const randomize = document.querySelector('#randomize')
-export const pins = Array.from(document.querySelectorAll('.pin'))
+export const templates = {
+  pin: document.querySelector('template#pin') as HTMLTemplateElement,
+  dcMarker: document.querySelector('template#dc-marker') as HTMLTemplateElement,
+  dcLine: document.querySelector('template#dc-line') as HTMLTemplateElement,
+}
 
 export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
-export const segmentsInput = document.querySelector('.segments-input')
+export const segmentsInput: HTMLInputElement = document.querySelector('.segments-input')
 
 export const vContainer: HTMLElement = document.querySelector('.v-layout')

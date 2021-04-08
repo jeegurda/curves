@@ -31,10 +31,6 @@ body {
   }
 }
 
-.hidden {
-  display: none;
-}
-
 .loading {
   position: absolute;
   z-index: 5;
@@ -50,7 +46,7 @@ body {
   }
 }
 
-.path {
+.curve {
   stroke: rgba(0, 0, 0, 0.8);
   stroke-width: 2;
   fill: none;
@@ -58,41 +54,26 @@ body {
   stroke-linecap: round;
 }
 
-.flattened-path {
-  stroke: rgba(0, 0, 0, 0.8);
-  stroke-width: 1;
-  stroke-dasharray: 2;
-  fill: none;
-  transition: d var(--speed);
-  stroke-linecap: round;
-}
-
-.supp-path {
+.dc-line {
   stroke: rgba(240, 0, 0, 0.4);
   fill: none;
   transition: d var(--speed);
   stroke-dasharray: 8 5;
+
+  &.level-1 {
+    stroke: rgba(200, 114, 0, 0.4);
+  }
+
+  &.level-2 {
+    stroke: rgba(1, 110, 1, 0.4);
+  }
 }
 
-.cast-path {
-  stroke: rgba(1, 110, 1, 0.4);
-  fill: none;
-  transition: d var(--speed);
-  stroke-dasharray: 8 5;
-}
-
-.cast-top-path {
-  stroke: rgba(200, 114, 0, 0.4);
-  fill: none;
-  transition: d var(--speed);
-  stroke-dasharray: 8 5;
-}
-
-.marker {
+.dc-marker {
   fill: rgba(0, 0, 0, 0.2);
   transition: cx var(--speed), cy var(--speed);
 
-  &#marker-cast-top-path {
+  &.level-1 {
     fill: rgba(0, 0, 240, 0.8)
   }
 }
@@ -119,7 +100,7 @@ body {
   cursor: -moz-grab;
   left: 0;
   top: 0;
-  transition: transform var(--speed), background var(--speed);
+  transition: transform var(--speed), background-color var(--speed);
 
   &:hover {
     background: rgba(0, 0, 200, 0.5);

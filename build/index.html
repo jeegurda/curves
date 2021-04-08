@@ -1,36 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Curves</title>
   </head>
   <body>
     <div class="layout">
       <div class="container">
-        <svg viewbox="0 0 500 500">
+        <svg viewbox="0 0 500 500" class="svg">
           <g class="grid"></g>
-          <path class="path"/>
-          <path class="flattened-path"/>
-
-          <circle id="marker-supp-path-0" class="marker" r="4"/>
-          <circle id="marker-supp-path-1" class="marker" r="4"/>
-          <circle id="marker-supp-path-2" class="marker" r="4"/>
-          <circle id="marker-cast-path-0" class="marker" r="4"/>
-          <circle id="marker-cast-path-1" class="marker" r="4"/>
-          <circle id="marker-cast-top-path" class="marker" r="4"/>
-
-          <path id="supp-path-0" class="supp-path"/>
-          <path id="supp-path-1" class="supp-path"/>
-          <path id="supp-path-2" class="supp-path"/>
-
-          <path id="cast-path-0" class="cast-path"/>
-          <path id="cast-path-1" class="cast-path"/>
-          <path id="cast-top-path" class="cast-top-path"/>
+          <path class="curve" />
         </svg>
-        <div data-id="0" class="pin pin-0"></div>
-        <div data-id="1" class="pin pin-1"></div>
-        <div data-id="2" class="pin pin-2"></div>
-        <div data-id="3" class="pin pin-3"></div>
         <div class="loading">
           <span>loading...</span>
         </div>
@@ -80,6 +60,19 @@
       </div>
     </div>
     <div class="v-layout"></div>
-    <script src="./bundle.js"></script>
+    <script defer src="./bundle.js"></script>
   </body>
+  <template id="pin">
+    <div data-id="" class="pin"></div>
+  </template>
+  <template id="dc-marker">
+    <svg>
+      <circle class="dc-marker" r="4" />
+    </svg>
+  </template>
+  <template id="dc-line">
+    <svg>
+      <path class="dc-line" />
+    </svg>
+  </template>
 </html>
