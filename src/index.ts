@@ -1,9 +1,11 @@
 import './curves.scss'
 
 import * as dom from './dom'
+import { checkDom } from './utils'
 import initVue from './init-vue'
 
 initVue()
+checkDom(dom)
 
 const leftButtonBitMask: number = 0b00001
 const width: number = 500
@@ -35,23 +37,23 @@ const randomizePts = () => {
 }
 
 let segments: number = 1
-let id: string = null
-let start = {x: null, y: null}
-let startPts = {x: null, y: null}
-let interpolationValue = Number(dom.tInput.value) / Math.pow(10, precision) // Interpolated to 0..1
+let id: number | null = null
+let start = {x: 0, y: 0}
+let startPts = {x: 0, y: 0}
+let interpolationValue = Number(dom.tInput?.value) / Math.pow(10, precision) // Interpolated to 0..1
 
-dom.save.addEventListener('click', () => {
+dom.save?.addEventListener('click', () => {
   localStorage.pts = JSON.stringify(pts)
-  dom.load.removeAttribute('disabled')
+  dom.load?.removeAttribute('disabled')
 })
 
-dom.load.addEventListener('click', () => {
+dom.load?.addEventListener('click', () => {
   try {
     pts = JSON.parse(localStorage.pts)
     build()
   } catch (e) {
     delete localStorage.pts
-    dom.load.setAttribute('disabled', '')
+    dom.load?.setAttribute('disabled', '')
   }
 })
 
@@ -59,7 +61,7 @@ try {
   JSON.parse(localStorage.pts)
 } catch (e) {
   delete localStorage.pts
-  dom.load.setAttribute('disabled', '')
+  dom.load?.setAttribute('disabled', '')
 }
 
 document.addEventListener('mousemove', e => {
@@ -78,10 +80,10 @@ document.addEventListener('mousemove', e => {
 
 const translateCenter = 'translate(-50%, -50%)'
 
-const renderPin = (index?: string) => {
-  if (index) {
-    pinEls[index].style.transform = `${translateCenter} translate(${pts[index][0]}px, ${pts[index][1]}px)`
-    pinEls[index].setAttribute('data-coords', `${pts[index][0]}, ${pts[index][1]}`)
+const renderPin = (idx?: number) => {
+  if (idx) {
+    pinEls[idx].style.transform = `${translateCenter} translate(${pts[idx][0]}px, ${pts[idx][1]}px)`
+    pinEls[idx].setAttribute('data-coords', `${pts[idx][0]}, ${pts[idx][1]}`)
   } else {
     pinEls.forEach((el, i) => {
       el.style.transform = `${translateCenter} translate(${pts[i][0]}px, ${pts[i][1]}px)`
@@ -100,7 +102,7 @@ const createDCElements = (points: Point[]) => {
 
     marker.classList.add(`level-${order}`)
     dcMarkers.push(marker)
-    dom.svg.append(marker)
+    dom.svg?.append(marker)
 
     // Dont build line for the last point
     if (idx !== points.length - 1) {
@@ -110,7 +112,7 @@ const createDCElements = (points: Point[]) => {
       line.classList.add(`level-${order}`)
       dcLines.push(line)
   
-      dom.svg.append(line)
+      dom.svg?.append(line)
     }
   }
 }
@@ -130,7 +132,7 @@ const getDCPoints = (interpolation: number): Point[] => {
   const out: Point[] = []
 
   const addPoints = (pointsArray: Point[], count: number): void => {
-    const buffer = []
+    const buffer: Point[] = []
     for (let i = pointsArray.length; i > pointsArray.length - count; i--) {
       const interpolatedXOffset = (pointsArray[pointsArray.length - i + 1][0] - pointsArray[pointsArray.length - i][0]) * interpolation
       const interpolatedYOffset = (pointsArray[pointsArray.length - i + 1][1] - pointsArray[pointsArray.length - i][1]) * interpolation
@@ -176,45 +178,47 @@ const renderPath = (): void => {
     // No need to calculate points
 
     pts.forEach((p, idx) => {
-      let prefix: string = null
+      let prefix: string = ''
 
       if (idx === 0) {
         prefix = 'M'
       } else if (idx === 1) {
         prefix = 'C'
-      } else {
-        prefix = ''
       }
 
       path += `${prefix} ${p[0]} ${p[1]}`
     })
   }
 
-  dom.curve.setAttribute('d', path)
+  dom.curve?.setAttribute('d', path)
 }
 
-dom.widthInput.addEventListener('input', e => {
+dom.widthInput?.addEventListener('input', e => {
   setWidth()
 })
 
-dom.tInput.addEventListener('input', (e: Event) => {
+dom.tInput?.addEventListener('input', (e: Event) => {
   const target = e.target as HTMLInputElement
   interpolationValue = Number(target.value) / Math.pow(10, precision)
-  dom.tValue.innerHTML = interpolationValue.toFixed(precision - 1)
+  if (dom.tValue) {
+    dom.tValue.innerHTML = interpolationValue.toFixed(precision - 1)
+  }
 
   renderDCElements(
     getDCPoints(interpolationValue)
   )
 })
-dom.tInput.addEventListener('mousedown', e => {
-  dom.container.classList.add('no-transition')
+dom.tInput?.addEventListener('mousedown', e => {
+  dom.container?.classList.add('no-transition')
 })
-dom.tInput.addEventListener('mouseup', e => {
-  dom.container.classList.remove('no-transition')
+dom.tInput?.addEventListener('mouseup', e => {
+  dom.container?.classList.remove('no-transition')
 })
 
 const setWidth = () => {
-  dom.curve.style.strokeWidth = dom.widthInput.value
+  if (dom.curve && dom.curve.style !== undefined) {
+    dom.curve.style.setProperty('strokeWidth', dom.widthInput?.value as string)
+  }
 }
 
 const buildGrid = () => {
@@ -223,26 +227,26 @@ const buildGrid = () => {
   for (let i = 0; i < height; i += height / rows) {
     let line = getLine()
     line.setAttribute('d', `M 0 ${i} H ${width}`)
-    dom.grid.appendChild(line)
+    dom.grid?.appendChild(line)
   }
   for (let i = 0; i < width; i += width / columns) {
     let line = getLine()
     line.setAttribute('d', `M ${i} 0 V ${height}`)
-    dom.grid.appendChild(line)
+    dom.grid?.appendChild(line)
   }
 }
 
 const updateSegmentsInput = () => {
-  dom.segmentsInput.value = String(segments)
+  dom.segmentsInput && (dom.segmentsInput.value = String(segments))
 }
 
-dom.segmentsIncrease.addEventListener('click', () => {
+dom.segmentsIncrease?.addEventListener('click', () => {
   segments++
   updateSegmentsInput()
   renderPath()
 })
 
-dom.segmentsDecrease.addEventListener('click', () => {
+dom.segmentsDecrease?.addEventListener('click', () => {
   segments--
   if (segments < 1) {
     segments = 1
@@ -264,7 +268,7 @@ const build = (initial: boolean = false) => {
   renderDCElements(points)
 }
 
-dom.randomize.addEventListener('click', (): void => {
+dom.randomize?.addEventListener('click', (): void => {
   randomizePts()
   build()
 })
@@ -276,21 +280,25 @@ const buildElements = (): void => {
     pinEls.push(pin)
     
     pin.setAttribute('data-id', String(i))
-    dom.container.appendChild(pinTemplate)
+    dom.container?.appendChild(pinTemplate)
   })
 
   pinEls.forEach(pin => {
     pin.addEventListener('mousedown', (e: MouseEvent) => {
       e.preventDefault()
       const target = e.target as HTMLElement
-      id = target.getAttribute('data-id')
-      dom.container.classList.add('no-transition')
+      id = Number(target.getAttribute('data-id'))
+      dom.container?.classList.add('no-transition')
 
       start = { x: e.pageX, y: e.pageY }
       startPts = { x: pts[id][0], y: pts[id][1] }
 
       const notMoving = () => {
-        dom.container.classList.remove('no-transition')
+        if (!id) {
+          throw new Error('bad id')
+        }
+
+        dom.container?.classList.remove('no-transition')
         if (pts[id][0] > width) {
           pts[id][0] = width
         } else if (pts[id][0] < 0) {
@@ -326,5 +334,4 @@ updateSegmentsInput() // no req - dom
 
 build(true)
 
-
-dom.container.classList.add('loaded')
+dom.container?.classList.add('loaded')

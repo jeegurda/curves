@@ -6,7 +6,7 @@ import * as dom from './dom'
 const init = () => {  
   new Vue({
     el: dom.vContainer,
-    render: c => c(App)
+    render: h => h(App)
   })
 }
 
