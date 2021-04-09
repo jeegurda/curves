@@ -21,4 +21,4 @@ export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
 export const segmentsInput: HTMLInputElement | null = document.querySelector('.segments-input')
 
-export const vContainer: HTMLElement | null = document.querySelector('.v-layo ut')
+export const vContainer: HTMLElement | null = document.querySelector('.v-layout')
