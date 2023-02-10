@@ -1,5 +1,7 @@
 const path = require('path')
 
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
 module.exports = {
   mode: 'development',
   entry: './src/index.ts',
@@ -15,22 +17,26 @@ module.exports = {
         use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
-        test: /\.ts$/,
+        test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-      },
-      {
-        test: /\.css$/,
-        use: ['vue-style-loader', 'css-loader'],
       },
     ],
   },
 
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+  ],
+
   resolve: {
-    extensions: ['.js', '.json', '.ts'],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
 
   devServer: {
-    contentBase: ['./build'],
+    static: {
+      directory: './build',
+    },
   },
 }

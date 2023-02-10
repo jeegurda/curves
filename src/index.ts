@@ -1,5 +1,3 @@
-import './curves.scss'
-
 import * as dom from './dom'
 import { checkDom } from './utils'
 
