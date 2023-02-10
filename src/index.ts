@@ -2,9 +2,7 @@ import './curves.scss'
 
 import * as dom from './dom'
 import { checkDom } from './utils'
-import initVue from './init-vue'
 
-initVue()
 checkDom(dom)
 
 const leftButtonBitMask: number = 0b00001
@@ -21,12 +19,7 @@ const rnd = (lim: number) => Math.floor(Math.random() * (lim + 1))
 type Point = [number, number]
 
 let pts = ((): Point[] => {
-  return Array
-    .from(new Array(order + 1))
-    .map(() => [
-      rnd(width),
-      rnd(height)
-    ])
+  return Array.from(new Array(order + 1)).map(() => [rnd(width), rnd(height)])
 })()
 
 const randomizePts = () => {
@@ -38,8 +31,8 @@ const randomizePts = () => {
 
 let segments: number = 1
 let id: number | null = null
-let start = {x: 0, y: 0}
-let startPts = {x: 0, y: 0}
+let start = { x: 0, y: 0 }
+let startPts = { x: 0, y: 0 }
 let interpolationValue = Number(dom.tInput?.value) / Math.pow(10, precision) // Interpolated to 0..1
 
 dom.save?.addEventListener('click', () => {
@@ -64,7 +57,7 @@ try {
   dom.load?.setAttribute('disabled', '')
 }
 
-document.addEventListener('mousemove', e => {
+document.addEventListener('mousemove', (e) => {
   if (!(e.buttons & leftButtonBitMask) || id === null) {
     return
   }
@@ -73,16 +66,16 @@ document.addEventListener('mousemove', e => {
 
   renderPin(id)
   renderPath()
-  renderDCElements(
-    getDCPoints(interpolationValue)
-  )
+  renderDCElements(getDCPoints(interpolationValue))
 })
 
 const translateCenter = 'translate(-50%, -50%)'
 
 const renderPin = (idx?: number) => {
   if (idx) {
-    pinEls[idx].style.transform = `${translateCenter} translate(${pts[idx][0]}px, ${pts[idx][1]}px)`
+    pinEls[
+      idx
+    ].style.transform = `${translateCenter} translate(${pts[idx][0]}px, ${pts[idx][1]}px)`
     pinEls[idx].setAttribute('data-coords', `${pts[idx][0]}, ${pts[idx][1]}`)
   } else {
     pinEls.forEach((el, i) => {
@@ -97,7 +90,9 @@ const dcLines: SVGElement[] = []
 
 const createDCElements = (points: Point[]) => {
   for (let idx = 0; idx < points.length; idx++) {
-    const markerTemplate = dom.templates.dcMarker.content.cloneNode(true) as HTMLTemplateElement
+    const markerTemplate = dom.templates.dcMarker.content.cloneNode(
+      true,
+    ) as HTMLTemplateElement
     const marker = markerTemplate.querySelector('.dc-marker') as SVGElement
 
     marker.classList.add(`level-${order}`)
@@ -106,12 +101,14 @@ const createDCElements = (points: Point[]) => {
 
     // Dont build line for the last point
     if (idx !== points.length - 1) {
-      const lineTemplate = dom.templates.dcLine.content.cloneNode(true) as HTMLTemplateElement
+      const lineTemplate = dom.templates.dcLine.content.cloneNode(
+        true,
+      ) as HTMLTemplateElement
       const line = lineTemplate.querySelector('.dc-line') as SVGElement
-  
+
       line.classList.add(`level-${order}`)
       dcLines.push(line)
-  
+
       dom.svg?.append(line)
     }
   }
@@ -122,8 +119,13 @@ const renderDCElements = (points: Point[]) => {
     dcMarkers[idx].setAttribute('cx', String(points[idx][0]))
     dcMarkers[idx].setAttribute('cy', String(points[idx][1]))
 
-    if (idx !== points.length - 1) {  
-      dcLines[idx].setAttribute('d', `M ${points[idx][0]} ${points[idx][1]} L ${points[idx + 1][0]} ${points[idx + 1][1]}`)
+    if (idx !== points.length - 1) {
+      dcLines[idx].setAttribute(
+        'd',
+        `M ${points[idx][0]} ${points[idx][1]} L ${points[idx + 1][0]} ${
+          points[idx + 1][1]
+        }`,
+      )
     }
   }
 }
@@ -134,9 +136,15 @@ const getDCPoints = (interpolation: number): Point[] => {
   const addPoints = (pointsArray: Point[], count: number): void => {
     const buffer: Point[] = []
     for (let i = pointsArray.length; i > pointsArray.length - count; i--) {
-      const interpolatedXOffset = (pointsArray[pointsArray.length - i + 1][0] - pointsArray[pointsArray.length - i][0]) * interpolation
-      const interpolatedYOffset = (pointsArray[pointsArray.length - i + 1][1] - pointsArray[pointsArray.length - i][1]) * interpolation
-  
+      const interpolatedXOffset =
+        (pointsArray[pointsArray.length - i + 1][0] -
+          pointsArray[pointsArray.length - i][0]) *
+        interpolation
+      const interpolatedYOffset =
+        (pointsArray[pointsArray.length - i + 1][1] -
+          pointsArray[pointsArray.length - i][1]) *
+        interpolation
+
       buffer.push([
         pointsArray[pointsArray.length - i][0] + interpolatedXOffset,
         pointsArray[pointsArray.length - i][1] + interpolatedYOffset,
@@ -148,10 +156,7 @@ const getDCPoints = (interpolation: number): Point[] => {
   let counter: number = pts.length - 1
 
   while (counter) {
-    addPoints(
-      (counter === pts.length - 1) ? pts : out, 
-      counter
-    )
+    addPoints(counter === pts.length - 1 ? pts : out, counter)
     counter--
   }
 
@@ -169,10 +174,10 @@ const renderPath = (): void => {
     // we know last point's coordinates so we can skip one last iteration
     for (let i = 0; i < segments - 1; i++) {
       interpolation += 1 / segments
-      const dcPoints = getDCPoints(interpolation) 
+      const dcPoints = getDCPoints(interpolation)
       path += ' L ' + dcPoints[dcPoints.length - 1].join(' ')
     }
-  
+
     path += ` L ${pts[3][0]} ${pts[3][1]}`
   } else {
     // No need to calculate points
@@ -193,7 +198,7 @@ const renderPath = (): void => {
   dom.curve?.setAttribute('d', path)
 }
 
-dom.widthInput?.addEventListener('input', e => {
+dom.widthInput?.addEventListener('input', (e) => {
   setWidth()
 })
 
@@ -204,14 +209,12 @@ dom.tInput?.addEventListener('input', (e: Event) => {
     dom.tValue.innerHTML = interpolationValue.toFixed(precision - 1)
   }
 
-  renderDCElements(
-    getDCPoints(interpolationValue)
-  )
+  renderDCElements(getDCPoints(interpolationValue))
 })
-dom.tInput?.addEventListener('mousedown', e => {
+dom.tInput?.addEventListener('mousedown', (e) => {
   dom.container?.classList.add('no-transition')
 })
-dom.tInput?.addEventListener('mouseup', e => {
+dom.tInput?.addEventListener('mouseup', (e) => {
   dom.container?.classList.remove('no-transition')
 })
 
@@ -222,7 +225,8 @@ const setWidth = () => {
 }
 
 const buildGrid = () => {
-  const getLine = () => document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  const getLine = () =>
+    document.createElementNS('http://www.w3.org/2000/svg', 'path')
 
   for (let i = 0; i < height; i += height / rows) {
     let line = getLine()
@@ -260,7 +264,7 @@ const build = (initial: boolean = false) => {
   renderPath()
 
   const points = getDCPoints(interpolationValue)
-  
+
   if (initial) {
     createDCElements(points)
   }
@@ -275,15 +279,17 @@ dom.randomize?.addEventListener('click', (): void => {
 
 const buildElements = (): void => {
   pts.forEach((_, i: number) => {
-    const pinTemplate = dom.templates.pin.content.cloneNode(true) as HTMLTemplateElement
+    const pinTemplate = dom.templates.pin.content.cloneNode(
+      true,
+    ) as HTMLTemplateElement
     const pin = pinTemplate.querySelector('.pin') as HTMLElement
     pinEls.push(pin)
-    
+
     pin.setAttribute('data-id', String(i))
     dom.container?.appendChild(pinTemplate)
   })
 
-  pinEls.forEach(pin => {
+  pinEls.forEach((pin) => {
     pin.addEventListener('mousedown', (e: MouseEvent) => {
       e.preventDefault()
       const target = e.target as HTMLElement
@@ -313,9 +319,7 @@ const buildElements = (): void => {
 
         renderPin(id)
         renderPath()
-        renderDCElements(
-          getDCPoints(interpolationValue)
-        )
+        renderDCElements(getDCPoints(interpolationValue))
 
         id = null
       }
@@ -328,7 +332,7 @@ const buildElements = (): void => {
 buildElements() // requires pts
 
 buildGrid() // no req - svg
-setWidth() // no req - svg 
+setWidth() // no req - svg
 
 updateSegmentsInput() // no req - dom
 

@@ -1,23 +1,18 @@
-const path = require('path');
-const { VueLoaderPlugin } = require('vue-loader');
+const path = require('path')
 
 module.exports = {
   mode: 'development',
   entry: './src/index.ts',
   output: {
     path: path.resolve(__dirname, './build'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
   },
 
   module: {
     rules: [
       {
         test: /\.s[ac]ss$/i,
-        use: [
-          "style-loader",
-          "css-loader",
-          "sass-loader",
-        ],
+        use: ['style-loader', 'css-loader', 'sass-loader'],
       },
       {
         test: /\.ts$/,
@@ -25,30 +20,17 @@ module.exports = {
         loader: 'babel-loader',
       },
       {
-        test: /\.vue$/i,
-        loader: 'vue-loader'
-      },
-      {
         test: /\.css$/,
-        use: [
-          'vue-style-loader',
-          'css-loader'
-        ]
-      }
+        use: ['vue-style-loader', 'css-loader'],
+      },
     ],
   },
 
-  plugins: [
-    new VueLoaderPlugin()
-  ],
-
   resolve: {
-    extensions: ['.wasm', '.mjs', '.js', '.json', '.ts'],
+    extensions: ['.js', '.json', '.ts'],
   },
 
   devServer: {
-    contentBase: [
-      './build'
-    ],
+    contentBase: ['./build'],
   },
 }

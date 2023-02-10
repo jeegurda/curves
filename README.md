@@ -1,18 +1,18 @@
 ### Bezier curves length
 
-Calculating cubic Bezier curve length by flattening using De Casteljau's algorithm.
+Calculate cubic Bezier curve length by flattening using De Casteljau's algorithm.
 
-It also demonstrates sequential interpolation points. You can traverse (t0) by mouseover.
+It also demonstrates sequential interpolation points. You can traverse (t0).
 
-You can view it here: http://jeegurda.github.io/curves/
+Run it at http://localhost:3000:
 
-Or you can run it at http://localhost:3000:
 ```bash
 $ npm i
 $ npm run dev
 ```
 
-Or you can build it to /build
+Build it to /build
+
 ```bash
 $ npm i
 $ npm run build
