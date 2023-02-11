@@ -1,15 +1,17 @@
-export const svg: SVGElement | null = document.querySelector('.svg')
-export const curve: SVGElement | null = document.querySelector('.curve')
-export const grid: SVGElement | null = document.querySelector('.grid')
+export const root = document.querySelector('.curves-root')
 
-export const widthInput: HTMLInputElement | null = document.querySelector('#width-input')
-export const tInput: HTMLInputElement | null = document.querySelector('#t-input')
-export const tValue = document.querySelector('#t-value')
+export const svg = document.querySelector<SVGElement>('.svg')
+export const curve = document.querySelector<SVGElement>('.curve')
+export const grid = document.querySelector<SVGElement>('.grid')
 
-export const save: HTMLElement | null = document.querySelector('#save')
-export const load: HTMLElement | null = document.querySelector('#load')
+export const widthInput =
+  document.querySelector<HTMLInputElement>('#width-input')
+export const tInput = document.querySelector<HTMLInputElement>('#t-input')
+export const tValue = document.querySelector<HTMLInputElement>('#t-value')
 
-export const container: HTMLElement | null = document.querySelector('.container')
+export const save = document.querySelector('#save')
+export const load = document.querySelector('#load')
+export const container = document.querySelector('.container')
 export const randomize = document.querySelector('#randomize')
 export const templates = {
   pin: document.querySelector('template#pin') as HTMLTemplateElement,
@@ -19,6 +21,16 @@ export const templates = {
 
 export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
-export const segmentsInput: HTMLInputElement | null = document.querySelector('.segments-input')
+export const segmentsInput =
+  document.querySelector<HTMLInputElement>('.segments-input')
 
-export const vContainer: HTMLElement | null = document.querySelector('.v-layout')
+export const vContainer = document.querySelector('.v-layout')
+
+export const strDom = {
+  pin: document.querySelector('template#pin'),
+  nested: {
+    pin: document.querySelector('template#pin'),
+    dcMarker: document.querySelector('template#dc-marker'),
+    dcLine: document.querySelector('template#dc-line'),
+  },
+}

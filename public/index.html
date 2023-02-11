@@ -5,6 +5,7 @@
     <title>Curves</title>
   </head>
   <body>
+    <div class="curves-root"></div>
     <div class="layout">
       <div class="container">
         <svg viewbox="0 0 500 500" class="svg">
@@ -20,8 +21,13 @@
           <h3>Input</h3>
         </div>
         <div class="opt-line">
-          <h4>T<sub>0</sub> = <span id="t-value">0.500</span></h4>
-          <input type="range" id="t-input" min="0" max="1000" value="500">
+          <h4>
+            T
+            <sub>0</sub>
+            =
+            <span id="t-value">0.500</span>
+          </h4>
+          <input type="range" id="t-input" min="0" max="1000" value="500" />
           <div class="t-input-labels">
             <div><span>0</span></div>
             <div><span>0.25</span></div>
@@ -34,7 +40,7 @@
           <h4>Flatten curve</h4>
           <div class="opt-flatten">
             <p>Segments:</p>
-            <input type="text" class="segments-input" disabled>
+            <input type="text" class="segments-input" disabled />
             <button class="segments-increase">⬆️</button>
             <button class="segments-decrease">⬇️</button>
           </div>
@@ -55,12 +61,11 @@
         </div>
         <div class="opt-line">
           <h4>Width</h4>
-          <input type="range" id="width-input" min="1" max="50" value="2">
+          <input type="range" id="width-input" min="1" max="50" value="2" />
         </div>
       </div>
     </div>
     <div class="v-layout"></div>
-    <script defer src="./bundle.js"></script>
   </body>
   <template id="pin">
     <div data-id="" class="pin"></div>

@@ -1,18 +1,7 @@
-type domObj = {
-  [key: string]: any
-}
-
-export const checkDom = (dom: domObj) => {
-  for (const key in dom) {
-    if (dom[key] === null) {
-      console.error('%o is mising from DOM', key)
-      throw new Error('Some DOM elements are missing')
-    }
+export const getEl = (el: Element | null) => {
+  if (el === null) {
+    console.error('%o is missing from the DOM', el)
+    throw new Error('Missing element')
   }
-
-  if (!dom.tInput) {
-    return false
-  }
-
-  return true
+  return el
 }

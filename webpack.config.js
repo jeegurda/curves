@@ -34,6 +34,8 @@ module.exports = {
     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
   },
 
+  devtool: 'eval-source-map',
+
   devServer: {
     static: {
       directory: './build',

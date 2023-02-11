@@ -1,8 +1,13 @@
-import * as React from 'react'
+import { FunctionComponent, useEffect } from 'react'
 import './curves.scss'
+import { init } from '../init'
 
-const Compo = () => {
+const Curves: FunctionComponent = () => {
+  useEffect(() => {
+    init()
+  }, [])
+
   return <div>sup</div>
 }
 
-export default Compo
+export { Curves }
