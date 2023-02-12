@@ -1,8 +1,6 @@
 export type PlotProps = {
   width: number
   height: number
-  cellSize: number
-  order: number
 }
 
 export type ControlProps = {
