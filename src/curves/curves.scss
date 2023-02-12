@@ -1,14 +1,7 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-}
-
 .container {
-  height: 500px;
-  background: #f3f3f3;
-  position: relative;
-  flex: 0 0 500px;
-
+  display: grid;
+  grid: auto / auto 1fr 1fr;
+  gap: 0px 20px;
   &.no-transition {
     .pin {
       transition: none;
@@ -18,40 +11,6 @@ body {
       transition: none;
     }
   }
-
-  svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  &.loaded {
-    .loading {
-      display: none;
-    }
-  }
-}
-
-.loading {
-  position: absolute;
-  z-index: 5;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  display: flex;
-
-  span {
-    margin: auto;
-  }
-}
-
-.curve {
-  stroke: rgba(0, 0, 0, 0.8);
-  stroke-width: 2;
-  fill: none;
-  transition: d var(--speed);
-  stroke-linecap: round;
 }
 
 .dc-line {
@@ -74,19 +33,8 @@ body {
   transition: cx var(--speed), cy var(--speed);
 
   &.level-1 {
-    fill: rgba(0, 0, 240, 0.8)
+    fill: rgba(0, 0, 240, 0.8);
   }
-}
-
-.grid {
-  path {
-    stroke-width: 1;
-    stroke: rgba(0, 0, 0, 0.05);
-  }
-}
-
-:root {
-  --speed: 0.2s;
 }
 
 .pin {
@@ -120,77 +68,5 @@ body {
     white-space: nowrap;
     transform: translate(-50%, 0);
     padding: 5px 10px;
-  }
-}
-
-.layout {
-  display: flex;
-}
-
-.input {
-  flex: 400px 0 0;
-  border-right: 1px solid rgba(0, 0, 0, 0.1)
-}
-
-.view {
-  /*padding: 50px 0;*/
-  border-right: 1px solid rgba(0, 0, 0, 0.1)
-}
-
-.opt-line {
-  /*margin-bottom: 20px;*/
-  padding: 25px 50px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1)
-}
-
-h3 {
-  margin: -10px 0;
-  color: rgba(0, 0, 0, 0.5);
-  font-weight: normal;
-}
-
-h4 {
-  margin: 0 0 10px;
-  color: rgba(0, 0, 0, 0.8)
-}
-
-p {
-  margin: 0;
-}
-
-#t-input {
-  width: 100%;
-}
-
-.opt-flatten {
-  display: flex;
-  align-items: center;
-
-  p {
-    margin-right: 20px;
-  }
-
-  input {
-    width: 50px;
-    font-size: 14px;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    margin-right: 10px;
-  }
-
-  button {
-    width: 70px;
-    font-size: 18px;
-  }
-}
-
-.t-input-labels {
-  display: flex;
-  justify-content: space-between;
-
-  div {
-    position: relative;
-    width: 1px;
-    display: flex;
-    justify-content: center;
   }
 }

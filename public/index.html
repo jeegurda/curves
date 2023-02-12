@@ -6,66 +6,6 @@
   </head>
   <body>
     <div class="curves-root"></div>
-    <div class="layout">
-      <div class="container">
-        <svg viewbox="0 0 500 500" class="svg">
-          <g class="grid"></g>
-          <path class="curve" />
-        </svg>
-        <div class="loading">
-          <span>loading...</span>
-        </div>
-      </div>
-      <div class="input">
-        <div class="opt-line">
-          <h3>Input</h3>
-        </div>
-        <div class="opt-line">
-          <h4>
-            T
-            <sub>0</sub>
-            =
-            <span id="t-value">0.500</span>
-          </h4>
-          <input type="range" id="t-input" min="0" max="1000" value="500" />
-          <div class="t-input-labels">
-            <div><span>0</span></div>
-            <div><span>0.25</span></div>
-            <div><span>0.5</span></div>
-            <div><span>0.75</span></div>
-            <div><span>1</span></div>
-          </div>
-        </div>
-        <div class="opt-line">
-          <h4>Flatten curve</h4>
-          <div class="opt-flatten">
-            <p>Segments:</p>
-            <input type="text" class="segments-input" disabled />
-            <button class="segments-increase">⬆️</button>
-            <button class="segments-decrease">⬇️</button>
-          </div>
-        </div>
-        <div class="opt-line">
-          <h4>Rebuild</h4>
-          <button id="randomize">Randomize points</button>
-        </div>
-        <div class="opt-line">
-          <h4>Save</h4>
-          <button id="save">Remember points</button>
-          <button id="load">Restore points</button>
-        </div>
-      </div>
-      <div class="view">
-        <div class="opt-line">
-          <h3>View</h3>
-        </div>
-        <div class="opt-line">
-          <h4>Width</h4>
-          <input type="range" id="width-input" min="1" max="50" value="2" />
-        </div>
-      </div>
-    </div>
-    <div class="v-layout"></div>
   </body>
   <template id="pin">
     <div data-id="" class="pin"></div>

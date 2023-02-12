@@ -23,14 +23,3 @@ export const segmentsIncrease = document.querySelector('.segments-increase')
 export const segmentsDecrease = document.querySelector('.segments-decrease')
 export const segmentsInput =
   document.querySelector<HTMLInputElement>('.segments-input')
-
-export const vContainer = document.querySelector('.v-layout')
-
-export const strDom = {
-  pin: document.querySelector('template#pin'),
-  nested: {
-    pin: document.querySelector('template#pin'),
-    dcMarker: document.querySelector('template#dc-marker'),
-    dcLine: document.querySelector('template#dc-line'),
-  },
-}

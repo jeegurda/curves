@@ -4,8 +4,7 @@ import { getEl } from './utils'
 const leftButtonBitMask: number = 0b00001
 const width: number = 500
 const height: number = 500
-const columns: number = 10
-const rows: number = 10
+
 const precision: number = 3
 const order: number = 3 // 3rd order - 4 points
 const pinEls: HTMLElement[] = []
@@ -220,22 +219,6 @@ const setWidth = () => {
   }
 }
 
-const buildGrid = () => {
-  const getLine = () =>
-    document.createElementNS('http://www.w3.org/2000/svg', 'path')
-
-  for (let i = 0; i < height; i += height / rows) {
-    let line = getLine()
-    line.setAttribute('d', `M 0 ${i} H ${width}`)
-    dom.grid?.appendChild(line)
-  }
-  for (let i = 0; i < width; i += width / columns) {
-    let line = getLine()
-    line.setAttribute('d', `M ${i} 0 V ${height}`)
-    dom.grid?.appendChild(line)
-  }
-}
-
 const updateSegmentsInput = () => {
   dom.segmentsInput && (dom.segmentsInput.value = String(segments))
 }
@@ -327,13 +310,10 @@ const buildElements = (): void => {
 
 buildElements() // requires pts
 
-buildGrid() // no req - svg
 setWidth() // no req - svg
 
 updateSegmentsInput() // no req - dom
 
 build(true)
 
-export const init = () => {
-  getEl(dom.container).classList.add('loaded')
-}
+export const init = () => {}

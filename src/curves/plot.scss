@@ -1,0 +1,18 @@
+svg {
+  display: block;
+}
+
+.grid {
+  path {
+    stroke-width: 1;
+    stroke: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.curve {
+  stroke: rgba(0, 0, 0, 0.8);
+  stroke-width: 2;
+  fill: none;
+  transition: d var(--speed);
+  stroke-linecap: round;
+}
