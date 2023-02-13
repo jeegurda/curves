@@ -1,30 +1,32 @@
 import { FunctionComponent, useEffect, useRef } from 'react'
 import { PlotProps } from '../types'
-import './plot.scss'
+import styles from './plot.scss'
 import * as curvesPlot from './curves-plot'
 
 const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
-  useEffect(
-    () =>
-      curvesPlot.init({
-        ref: canvasRef.current,
-        width: width,
-        height: height,
-      }),
-    [],
-  )
+  useEffect(() => {
+    const plot = curvesPlot.init({
+      ref: canvasRef.current,
+      width: width,
+      height: height,
+    })
+
+    window.plot = plot
+
+    return () => {
+      plot.destroy()
+    }
+  }, [])
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ width, height }}
-      width={width}
-      height={height}
-    >
-      Plot
-    </canvas>
+    <div className={styles.container}>
+      <canvas ref={canvasRef} style={{ width, height }}>
+        Plot
+      </canvas>
+      <div className="ui"></div>
+    </div>
   )
 }
 

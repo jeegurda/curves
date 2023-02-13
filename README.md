@@ -8,19 +8,32 @@ It also demonstrates sequential interpolation points. You can traverse (t0).
 
 ### Build it to /build
 
+and serve with anything
+
 ```bash
 $ npm i
 $ npm run build
+$ npx serve ./build
 ```
 
 ### Run it at http://localhost:3000:
 
 ```bash
 $ npm i
-$ npm run build
+$ npm run serve
 ```
 
 ---
+
+### Force env with force_build var
+
+```bash
+# dev build with 50mb js
+$ force_build=dev npm run build
+
+# prod build with source maps and shit
+$ force_build=prod npm run serve
+```
 
 #### Todo:
 

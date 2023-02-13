@@ -6,4 +6,5 @@ export const getEl = (el: Element | null) => {
   return el
 }
 
+// requires integer > 1
 export const rnd = (lim: number) => Math.floor(Math.random() * lim)

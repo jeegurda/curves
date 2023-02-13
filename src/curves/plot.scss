@@ -2,10 +2,6 @@ canvas {
   display: block;
 }
 
-.curve {
-  stroke: rgba(0, 0, 0, 0.8);
-  stroke-width: 2;
-  fill: none;
-  transition: d var(--speed);
-  stroke-linecap: round;
+.container {
+  position: relative;
 }
