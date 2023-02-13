@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect } from 'react'
-import './curves.scss'
+import cn from './curves.scss'
 import { Plot } from './Plot'
 import { Controls } from './Controls'
 
@@ -9,11 +9,11 @@ const tPrecision = 1000
 
 const Curves: FunctionComponent = () => {
   return (
-    <div className="container">
-      <div className="plot">
+    <div className={cn.container}>
+      <div>
         <Plot width={width} height={height} />
       </div>
-      <div className="controls">
+      <div>
         <Controls tPrecision={tPrecision} />
       </div>
     </div>

@@ -1,7 +1,54 @@
-canvas {
-  display: block;
-}
-
 .container {
   position: relative;
+}
+
+.canvas {
+  position: relative;
+  z-index: 1;
+
+  canvas {
+    display: block;
+  }
+}
+
+.ui {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.marker {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  background: rgba(220, 0, 220, 0.4);
+  border-radius: 50%;
+}
+
+.label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, 12px);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
 }

@@ -1,15 +1,20 @@
-import { FunctionComponent, useEffect, useRef } from 'react'
-import { PlotProps } from '../types'
-import styles from './plot.scss'
+import { FunctionComponent, useEffect, useRef, useState } from 'react'
+import { PlotProps, Point } from '../types'
+import cn from './plot.scss'
 import * as curvesPlot from './curves-plot'
 
 const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
+  const [pts, setPts] = useState<Point[]>([])
+
   useEffect(() => {
     const plot = curvesPlot.init({
-      ref: canvasRef.current,
+      canvasRef: canvasRef.current,
+      uiRef: uiRef.current,
       width: width,
       height: height,
     })
+
+    setPts(() => plot.pts)
 
     window.plot = plot
 
@@ -19,13 +24,49 @@ const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
   }, [])
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const uiRef = useRef<HTMLDivElement>(null)
+
+  const start = (idx: number) => {
+    const handleMove = (e: MouseEvent) => {
+      setPts((pts) => {
+        const pts2 = pts.slice()
+        pts2[idx][0] += e.movementX
+        pts2[idx][1] += e.movementY
+        return pts2
+      })
+    }
+
+    document.addEventListener('mousemove', handleMove)
+    document.addEventListener('mouseup', () => {
+      document.removeEventListener('mousemove', handleMove)
+    })
+  }
 
   return (
-    <div className={styles.container}>
-      <canvas ref={canvasRef} style={{ width, height }}>
-        Plot
-      </canvas>
-      <div className="ui"></div>
+    <div className={cn.container}>
+      <div className={cn.canvas}>
+        <canvas ref={canvasRef} style={{ width, height }}>
+          Plot
+        </canvas>
+      </div>
+      <div className={cn.ui} ref={uiRef}>
+        {pts.map((pt, idx) => (
+          <div
+            className={cn.pin}
+            key={idx}
+            style={{ transform: `translate(${pt[0]}px, ${pt[1]}px)` }}
+            onMouseDown={(e) => {
+              start(idx)
+            }}
+            onMouseUp={(e) => {
+              stop()
+            }}
+          >
+            <span className={cn.marker}></span>
+            <div className={cn.label}>{`${pt[0]},${pt[1]}`}</div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

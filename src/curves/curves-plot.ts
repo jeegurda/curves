@@ -77,35 +77,52 @@ const destroyPlot = ({
   ctx,
   width,
   height,
+  uiRef,
 }: {
   ctx: CanvasRenderingContext2D
   width: number
   height: number
+  uiRef: HTMLElement
 }) => {
   ctx.clearRect(0, 0, width, height)
+  // uiRef.innerHTML = ''
+}
+
+const drawUi = (
+  ctx: CanvasRenderingContext2D,
+  pts: Point[],
+  uiRef: HTMLElement,
+) => {
+  // const pins = uiRef.
+  // pts.forEach((pt) => {
+  //   pin.style.transform = `translate(${pt[0]}px) translate(${pt[1]}px)`
+  //   uiRef.appendChild(pin)
+  // })
 }
 
 const createPlot = ({
-  ref,
+  canvasRef,
+  uiRef,
   width,
   height,
 }: {
-  ref: HTMLCanvasElement
+  canvasRef: HTMLCanvasElement
+  uiRef: HTMLDivElement
   width: number
   height: number
 }) => {
   const pts: Point[] = Array.from(Array(order + 1)).map(() => [0, 0])
   randomizePts(pts, width, height)
 
-  const ctx = ref.getContext('2d')
+  const ctx = canvasRef.getContext('2d')
 
   if (ctx === null) {
     throw new Error('Context died')
   }
 
   const setup = () => {
-    ref.width = width * window.devicePixelRatio
-    ref.height = height * window.devicePixelRatio
+    canvasRef.width = width * window.devicePixelRatio
+    canvasRef.height = height * window.devicePixelRatio
     ctx.scale(devicePixelRatio, devicePixelRatio)
     ctx.save()
   }
@@ -119,8 +136,10 @@ const createPlot = ({
   setup()
   draw()
 
+  drawUi(ctx, pts, uiRef)
+
   const destroy = () => {
-    destroyPlot({ ctx, width, height })
+    destroyPlot({ ctx, width, height, uiRef })
   }
 
   return {
@@ -132,19 +151,23 @@ const createPlot = ({
 }
 
 const init = ({
-  ref,
+  canvasRef,
+  uiRef,
   width,
   height,
 }: {
-  ref: HTMLCanvasElement | null
+  canvasRef: HTMLCanvasElement | null
+  uiRef: HTMLDivElement | null
   width: number
   height: number
 }) => {
-  if (ref === null) {
+  if (canvasRef === null) {
     throw new Error('Canvas ref is null')
+  } else if (uiRef === null) {
+    throw new Error('UI ref is null')
   }
 
-  const _exposed = createPlot({ ref, width, height })
+  const _exposed = createPlot({ canvasRef, uiRef, width, height })
 
   return {
     ..._exposed,
