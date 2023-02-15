@@ -16,7 +16,7 @@ $ npm run build
 $ npx serve ./build
 ```
 
-### Run it at http://localhost:3000:
+### Run it with webpack-dev-serve
 
 ```bash
 $ npm i

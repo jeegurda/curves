@@ -6,7 +6,7 @@ const order = 3
 // prettier-ignore
 
 // Bounds for randomizer.
-// 4x4 matrix with areas defined by 4 pts:
+// 4x4 matrix with areas defined by:
 // x, y, width, height
 const rndBounds = [
   0,    0,    0.2,  0.2,

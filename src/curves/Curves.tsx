@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect } from 'react'
+import { FunctionComponent } from 'react'
 import cn from './curves.scss'
 import { Plot } from './Plot'
 import { Controls } from './Controls'
