@@ -3,7 +3,6 @@
     "strict": true,
     "jsx": "react-jsx",
     "noEmit": true,
-    "target": "ES6",
-    "moduleResolution": "node"
+    "target": "ES2022"
   }
 }
