@@ -8,9 +8,3 @@ export type ControlProps = {
 }
 
 export type Point = [number, number]
-
-declare global {
-  interface Window {
-    plot: any
-  }
-}

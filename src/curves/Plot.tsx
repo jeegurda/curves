@@ -16,8 +16,6 @@ const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
 
     setPts(() => plot.pts)
 
-    window.plot = plot
-
     return () => {
       plot.destroy()
     }
