@@ -1,11 +1,14 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react'
-import { Point } from '../types'
+import { FunctionComponent, useEffect, useRef } from 'react'
 import cn from './Plot.scss'
 import * as curvesPlot from './curves-plot'
 import { plotHeight, plotWidth } from '../params'
+import { mainSlice } from '../root/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { AppDispatch, RootState } from '../types'
 
 const Plot: FunctionComponent = () => {
-  const [pts, setPts] = useState<Point[]>([])
+  const pts = useSelector((state: RootState) => state.pts)
+  const dispatch = useDispatch<AppDispatch>()
 
   useEffect(() => {
     const plot = curvesPlot.init({
@@ -15,7 +18,7 @@ const Plot: FunctionComponent = () => {
       height: plotHeight,
     })
 
-    setPts(() => plot.pts)
+    dispatch(mainSlice.actions.setPts(plot.pts))
 
     return () => {
       plot.destroy()
@@ -27,12 +30,12 @@ const Plot: FunctionComponent = () => {
 
   const start = (idx: number) => {
     const handleMove = (e: MouseEvent) => {
-      setPts((pts) => {
-        const pts2 = pts.slice()
-        pts2[idx][0] += e.movementX
-        pts2[idx][1] += e.movementY
-        return pts2
-      })
+      // setPts((pts) => {
+      //   const pts2 = pts.slice()
+      //   pts2[idx][0] += e.movementX
+      //   pts2[idx][1] += e.movementY
+      //   return pts2
+      // })
     }
 
     document.addEventListener('mousemove', handleMove)
