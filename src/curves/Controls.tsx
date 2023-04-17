@@ -1,9 +1,9 @@
 import { FunctionComponent, useCallback } from 'react'
-import { ControlProps } from '../types'
+import { tPrecision } from '../params'
 
 // let interpolationValue = Number(dom.tInput?.value) / Math.pow(10, precision) // Interpolated to 0..1
 
-const Controls: FunctionComponent<ControlProps> = ({ tPrecision }) => {
+const Controls: FunctionComponent = () => {
   const savePts = useCallback(() => {
     // localStorage.pts = JSON.stringify(pts)
     // dom.load?.removeAttribute('disabled')

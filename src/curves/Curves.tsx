@@ -1,20 +1,16 @@
 import { FunctionComponent } from 'react'
-import cn from './curves.scss'
+import cn from './Curves.scss'
 import { Plot } from './Plot'
 import { Controls } from './Controls'
-
-const width = 500
-const height = 500
-const tPrecision = 1000
 
 const Curves: FunctionComponent = () => {
   return (
     <div className={cn.container}>
       <div>
-        <Plot width={width} height={height} />
+        <Plot />
       </div>
       <div>
-        <Controls tPrecision={tPrecision} />
+        <Controls />
       </div>
     </div>
   )

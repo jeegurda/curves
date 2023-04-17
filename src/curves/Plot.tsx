@@ -1,17 +1,18 @@
 import { FunctionComponent, useEffect, useRef, useState } from 'react'
-import { PlotProps, Point } from '../types'
-import cn from './plot.scss'
+import { Point } from '../types'
+import cn from './Plot.scss'
 import * as curvesPlot from './curves-plot'
+import { plotHeight, plotWidth } from '../params'
 
-const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
+const Plot: FunctionComponent = () => {
   const [pts, setPts] = useState<Point[]>([])
 
   useEffect(() => {
     const plot = curvesPlot.init({
       canvasRef: canvasRef.current,
       uiRef: uiRef.current,
-      width: width,
-      height: height,
+      width: plotWidth,
+      height: plotHeight,
     })
 
     setPts(() => plot.pts)
@@ -41,11 +42,12 @@ const Plot: FunctionComponent<PlotProps> = ({ width, height }) => {
   }
 
   return (
-    <div className={cn.container}>
+    <div
+      className={cn.container}
+      style={{ width: plotWidth, height: plotHeight }}
+    >
       <div className={cn.canvas}>
-        <canvas ref={canvasRef} style={{ width, height }}>
-          Plot
-        </canvas>
+        <canvas ref={canvasRef}>Plot</canvas>
       </div>
       <div className={cn.ui} ref={uiRef}>
         {pts.map((pt, idx) => (
