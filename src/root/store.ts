@@ -3,6 +3,7 @@ import { MainSliceState, Point } from '../types'
 
 const initialState: MainSliceState = {
   pts: [],
+  syncUI: 0,
 }
 
 export const mainSlice = createSlice({
@@ -14,6 +15,9 @@ export const mainSlice = createSlice({
     },
     setPt: (state, { payload }: PayloadAction<{ idx: number; pt: Point }>) => {
       state.pts[payload.idx] = payload.pt
+    },
+    syncUi: (state) => {
+      state.syncUI++
     },
   },
 })

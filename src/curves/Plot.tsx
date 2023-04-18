@@ -2,35 +2,48 @@ import { FunctionComponent, useEffect, useRef, useState } from 'react'
 import cn from './Plot.scss'
 import * as curvesPlot from './curves-plot'
 import { plotHeight, plotWidth } from '../params'
-import { Point } from '../types'
+import { AppDispatch, IPlot, Point, RootState } from '../types'
 import { te } from '../utils'
+import { useDispatch, useSelector } from 'react-redux'
+import { mainSlice } from '../root/store'
 
-const Plot: FunctionComponent = () => {
+interface Props {
+  plotRef: React.MutableRefObject<IPlot | undefined>
+}
+
+const Plot: FunctionComponent<Props> = ({ plotRef }) => {
   // const pts = useSelector((state: RootState) => state.pts)
   // const dispatch = useDispatch<AppDispatch>()
 
+  const syncUI = useSelector((state: RootState) => state.syncUI)
+
   const [localPts, setLocalPts] = useState<Point[]>([])
-  const plotRef = useRef<ReturnType<typeof curvesPlot.create>>()
 
   useEffect(() => {
-    plotRef.current = curvesPlot.create({
+    const plot = curvesPlot.create({
       canvasRef: canvasRef.current,
-      uiRef: uiRef.current,
       width: plotWidth,
       height: plotHeight,
     })
 
-    // dispatch(mainSlice.actions.setPts(plot.pts))
-    setLocalPts(plotRef.current.pts)
+    plot.init()
+
+    // dispatch(mainSlice.actions.setPts)
+    setLocalPts(plot.pts)
+
+    plotRef.current = plot
 
     return () => {
-      if (!plotRef.current) {
-        te('Plot ref is not set')
-      }
-
-      plotRef.current.destroy()
+      plot.destroy()
     }
   }, [])
+
+  useEffect(() => {
+    if (!plotRef.current) {
+      te('Plot ref is not set')
+    }
+    setLocalPts(plotRef.current.pts)
+  }, [syncUI])
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const uiRef = useRef<HTMLDivElement>(null)

@@ -15,6 +15,6 @@ export const qsa = <T extends HTMLElement>(qs: string): T[] => {
 /** requires integer > 1 */
 export const rnd = (lim: number) => Math.floor(Math.random() * lim)
 
-export const te: (msg: string) => never = (msg) => {
-  throw new Error(msg)
+export const te: (arg: any) => never = (arg) => {
+  throw new Error(arg)
 }

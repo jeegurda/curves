@@ -1,53 +1,94 @@
-import { FunctionComponent, useCallback } from 'react'
-import { tPrecision } from '../params'
+import { ChangeEvent, FunctionComponent, useCallback, useState } from 'react'
+import {
+  initialTValue,
+  order,
+  plotHeight,
+  plotWidth,
+  tPrecision,
+} from '../params'
+import { AppDispatch, IPlot, Point } from '../types'
+import { te } from '../utils'
+import { useDispatch } from 'react-redux'
+import { mainSlice } from '../root/store'
+import { randomizePts } from './curves-plot'
 
-// let interpolationValue = Number(dom.tInput?.value) / Math.pow(10, precision) // Interpolated to 0..1
+const validatePts = (pts: unknown): Point[] => {
+  if (
+    Array.isArray(pts) &&
+    pts.length === order + 1 &&
+    pts.every(
+      (pt) =>
+        Array.isArray(pt) && pt.every((ptCoord) => typeof ptCoord === 'number'),
+    )
+  ) {
+    console.log('Looking good', pts)
+    return pts
+  }
 
-const Controls: FunctionComponent = () => {
+  te('Failed to parse pts')
+}
+
+interface Props {
+  plotRef: React.MutableRefObject<IPlot | undefined>
+}
+
+const Controls: FunctionComponent<Props> = ({ plotRef }) => {
+  const dispatch = useDispatch<AppDispatch>()
+
   const savePts = useCallback(() => {
-    // localStorage.pts = JSON.stringify(pts)
-    // dom.load?.removeAttribute('disabled')
+    const plot = plotRef.current ?? te('Plot ref is not set')
+
+    localStorage.pts = JSON.stringify(plot.pts)
   }, [])
   const loadPts = useCallback(() => {
-    // try {
-    //   pts = JSON.parse(localStorage.pts)
-    //   build()
-    // } catch (e) {
-    //   delete localStorage.pts
-    //   dom.load?.setAttribute('disabled', '')
-    // }
+    try {
+      const parsedPts = JSON.parse(localStorage.pts)
+
+      validatePts(parsedPts)
+
+      const plot = plotRef.current ?? te('Plot ref is not set')
+      plot.replacePts(parsedPts)
+      plot.draw()
+
+      dispatch(mainSlice.actions.syncUi())
+    } catch (e) {
+      delete localStorage.pts
+    }
   }, [])
 
-  const randomizePts = () => {}
+  const handleRandomize = () => {
+    const plot = plotRef.current ?? te('Plot ref is not set')
 
-  const tValueChange = () => {
-    // const target = e.target as HTMLInputElement
-    // interpolationValue = Number(target.value) / Math.pow(10, precision)
-    // if (dom.tValue) {
-    //   dom.tValue.innerHTML = interpolationValue.toFixed(precision - 1)
-    // }
-    // renderDCElements(getDCPoints(interpolationValue))
+    randomizePts(plot.pts, plotWidth, plotHeight)
+    plot.draw()
+    dispatch(mainSlice.actions.syncUi())
   }
+
+  const tValueInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('changed')
+    setTValue(Number(evt.target.value))
+  }
+
+  const [tValue, setTValue] = useState(Math.floor(initialTValue * tPrecision))
 
   return (
     <div>
       <div>
-        <span id="t-value">0.500</span>
+        <span>{(tValue / tPrecision).toFixed(Math.log10(tPrecision))}</span>
         <input
           type="range"
-          id="t-input"
           min={0}
           max={tPrecision}
-          defaultValue={tPrecision / 2}
-          onChange={tValueChange}
+          onInput={tValueInput}
+          value={tValue}
         />
       </div>
       <div>
         <span>Segments</span>
-        <input type="number" />
+        <input type="number" min="0" />
       </div>
       <div>
-        <button onClick={randomizePts}>Randomize points</button>
+        <button onClick={handleRandomize}>Randomize points</button>
       </div>
       <div>
         <button onClick={savePts}>Remember points</button>

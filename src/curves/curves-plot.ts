@@ -1,8 +1,6 @@
-import { Point } from '../types'
-import { rnd } from '../utils'
-
-// TODO: should scale with order
-const order = 3
+import { order } from '../params'
+import { IPlot, Point } from '../types'
+import { rnd, te } from '../utils'
 
 // prettier-ignore
 
@@ -16,7 +14,7 @@ const rndBounds = [
   0,    0.8,  0.2,  0.2
 ]
 
-const randomizePts = (pts: Point[], width: number, height: number) => {
+export const randomizePts = (pts: Point[], width: number, height: number) => {
   pts.forEach((pt, idx) => {
     const rx = rndBounds[idx * 4]
     const ry = rndBounds[idx * 4 + 1]
@@ -84,12 +82,10 @@ const destroyPlot = ({
   ctx,
   width,
   height,
-  uiRef,
 }: {
   ctx: CanvasRenderingContext2D
   width: number
   height: number
-  uiRef: HTMLElement
 }) => {
   ctx.clearRect(0, 0, width, height)
   // TODO: Clear UI?
@@ -97,16 +93,14 @@ const destroyPlot = ({
 
 const createPlot = ({
   canvasRef,
-  uiRef,
   width,
   height,
 }: {
   canvasRef: HTMLCanvasElement
-  uiRef: HTMLDivElement
   width: number
   height: number
-}) => {
-  const pts: Point[] = Array.from(Array(order + 1)).map(() => [0, 0])
+}): IPlot => {
+  let pts: Point[] = Array.from(Array(order + 1)).map(() => [0, 0])
   randomizePts(pts, width, height)
 
   const ctx = canvasRef.getContext('2d')
@@ -119,7 +113,6 @@ const createPlot = ({
     canvasRef.width = width * window.devicePixelRatio
     canvasRef.height = height * window.devicePixelRatio
     ctx.scale(devicePixelRatio, devicePixelRatio)
-    ctx.save()
   }
 
   const draw = () => {
@@ -128,11 +121,17 @@ const createPlot = ({
     drawCurve(ctx, width, height, pts)
   }
 
-  setup()
-  draw()
-
   const destroy = () => {
-    destroyPlot({ ctx, width, height, uiRef })
+    destroyPlot({ ctx, width, height })
+  }
+
+  const init = () => {
+    setup()
+    draw()
+  }
+
+  const replacePts = (newPts: Point[]) => {
+    pts.splice(0, pts.length, ...newPts)
   }
 
   return {
@@ -140,31 +139,25 @@ const createPlot = ({
     ctx,
     draw,
     pts,
+    replacePts,
+    init,
   }
 }
 
 const create = ({
   canvasRef,
-  uiRef,
   width,
   height,
 }: {
   canvasRef: HTMLCanvasElement | null
-  uiRef: HTMLDivElement | null
   width: number
   height: number
 }) => {
   if (canvasRef === null) {
-    throw new Error('Canvas ref is null')
-  } else if (uiRef === null) {
-    throw new Error('UI ref is null')
+    te('Canvas ref in null')
   }
 
-  const _exposed = createPlot({ canvasRef, uiRef, width, height })
-
-  return {
-    ..._exposed,
-  }
+  return createPlot({ canvasRef, width, height })
 }
 
 export { create }
