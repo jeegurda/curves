@@ -1,5 +1,4 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit'
-import type { PayloadAction } from '@reduxjs/toolkit'
+import { PayloadAction, configureStore, createSlice } from '@reduxjs/toolkit'
 import { MainSliceState, Point } from '../types'
 
 const initialState: MainSliceState = {
@@ -12,6 +11,9 @@ export const mainSlice = createSlice({
   reducers: {
     setPts: (state, { payload }: PayloadAction<Point[]>) => {
       state.pts = payload
+    },
+    setPt: (state, { payload }: PayloadAction<{ idx: number; pt: Point }>) => {
+      state.pts[payload.idx] = payload.pt
     },
   },
 })

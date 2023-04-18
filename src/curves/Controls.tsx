@@ -18,6 +18,8 @@ const Controls: FunctionComponent = () => {
     // }
   }, [])
 
+  const randomizePts = () => {}
+
   const tValueChange = () => {
     // const target = e.target as HTMLInputElement
     // interpolationValue = Number(target.value) / Math.pow(10, precision)
@@ -26,13 +28,6 @@ const Controls: FunctionComponent = () => {
     // }
     // renderDCElements(getDCPoints(interpolationValue))
   }
-
-  const widthChange = () => {
-    // dom.curve.style.setProperty('strokeWidth', dom.widthInput?.value as string)
-  }
-
-  const segmentsInc = () => {}
-  const segmentsDec = () => {}
 
   return (
     <div>
@@ -48,34 +43,15 @@ const Controls: FunctionComponent = () => {
         />
       </div>
       <div>
-        <input type="text" className="segments-input" disabled />
-        <button onClick={segmentsInc} className="segments-increase">
-          ⬆️
-        </button>
-        <button onClick={segmentsDec} className="segments-decrease">
-          ⬇️
-        </button>
+        <span>Segments</span>
+        <input type="number" />
       </div>
       <div>
-        <button id="randomize">Randomize points</button>
+        <button onClick={randomizePts}>Randomize points</button>
       </div>
       <div>
-        <button id="save" onClick={savePts}>
-          Remember points
-        </button>
-        <button id="load" onClick={loadPts}>
-          Restore points
-        </button>
-      </div>
-      <div>
-        <input
-          type="range"
-          id="width-input"
-          min="1"
-          max="50"
-          defaultValue="2"
-          onChange={widthChange}
-        />
+        <button onClick={savePts}>Remember points</button>
+        <button onClick={loadPts}>Restore points</button>
       </div>
     </div>
   )

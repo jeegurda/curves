@@ -1,6 +1,7 @@
 import { Point } from '../types'
 import { rnd } from '../utils'
 
+// TODO: should scale with order
 const order = 3
 
 // prettier-ignore
@@ -67,7 +68,13 @@ const drawCurve = (
 
   const [sp, cp1, cp2, ep] = pts
   path.moveTo(sp[0], sp[1])
-  path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
+
+  const segments = 0
+
+  if (segments > 0) {
+  } else {
+    path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
+  }
 
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
   ctx.stroke(path)
@@ -85,19 +92,7 @@ const destroyPlot = ({
   uiRef: HTMLElement
 }) => {
   ctx.clearRect(0, 0, width, height)
-  // uiRef.innerHTML = ''
-}
-
-const drawUi = (
-  ctx: CanvasRenderingContext2D,
-  pts: Point[],
-  uiRef: HTMLElement,
-) => {
-  // const pins = uiRef.
-  // pts.forEach((pt) => {
-  //   pin.style.transform = `translate(${pt[0]}px) translate(${pt[1]}px)`
-  //   uiRef.appendChild(pin)
-  // })
+  // TODO: Clear UI?
 }
 
 const createPlot = ({
@@ -136,8 +131,6 @@ const createPlot = ({
   setup()
   draw()
 
-  drawUi(ctx, pts, uiRef)
-
   const destroy = () => {
     destroyPlot({ ctx, width, height, uiRef })
   }
@@ -150,7 +143,7 @@ const createPlot = ({
   }
 }
 
-const init = ({
+const create = ({
   canvasRef,
   uiRef,
   width,
@@ -174,4 +167,4 @@ const init = ({
   }
 }
 
-export { init }
+export { create }
