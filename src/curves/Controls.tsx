@@ -67,7 +67,12 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
   }
 
   const tValueInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    setTValue(Number(evt.target.value))
+    const value = Number(evt.target.value)
+    setTValue(value)
+
+    const plot = plotRef.current ?? te('Plot ref is not set')
+    plot.props.tValue = value / tPrecision
+    plot.draw()
   }
 
   const [tValue, setTValue] = useState(Math.floor(initialTValue * tPrecision))

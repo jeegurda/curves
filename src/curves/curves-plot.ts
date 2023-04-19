@@ -127,9 +127,11 @@ const drawDCSegments = (
   tValue: number,
 ) => {
   const dcPts = getDCPts(pts, tValue)
+  const dcPts2 = getDCPts(dcPts, tValue)
 
   drawSegmentLine(ctx, pts)
   drawSegmentLine(ctx, dcPts)
+  drawSegmentLine(ctx, dcPts2)
 }
 
 const destroyPlot = ({
@@ -195,7 +197,16 @@ const createPlot = ({
     replacePts,
     init,
     props: {
-      tValue,
+      get tValue() {
+        return tValue
+      },
+      set tValue(v) {
+        if (v < 0 || v > 1) {
+          console.warn('t is out of bounds: %o', v)
+        }
+
+        tValue = v
+      },
     },
   }
 }
