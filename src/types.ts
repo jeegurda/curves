@@ -17,4 +17,7 @@ export interface IPlot {
   destroy: () => void
   ctx: CanvasRenderingContext2D
   replacePts: (newPts: Point[]) => void
+  props: {
+    tValue: number
+  }
 }

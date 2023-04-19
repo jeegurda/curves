@@ -1,4 +1,4 @@
-import { order } from '../params'
+import { initialTValue, order } from '../params'
 import { IPlot, Point } from '../types'
 import { rnd, te } from '../utils'
 
@@ -51,9 +51,11 @@ const drawGrid = (
     grid.lineTo(idx * cellSize + subpixelOffset, height)
   })
 
+  ctx.save()
   ctx.strokeStyle = strokeStyle
   ctx.lineWidth = strokeWidth
   ctx.stroke(grid)
+  ctx.restore()
 }
 
 const drawCurve = (
@@ -74,8 +76,60 @@ const drawCurve = (
     path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
   }
 
+  ctx.save()
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
   ctx.stroke(path)
+  ctx.restore()
+}
+
+const lerp = (a: Point, b: Point, t: number): Point => {
+  const s = 1 - t
+  return [a[0] * s + b[0] * t, a[1] * s + b[1] * t]
+}
+
+/** Returns points for De Casteljau's algorithm segments extrapolated to tValue
+ * @example getDCPts([a, b, c, d]) => [
+ *  [e, f, g],
+ *  [h, i],
+ *  [j],
+ * ]
+ */
+const getDCPts = (pts: Point[], t: number) => {
+  const out = []
+  for (let i = 0; i < pts.length - 1; i++) {
+    out.push(lerp(pts[i], pts[i + 1], t))
+  }
+  return out
+}
+
+const drawSegmentLine = (ctx: CanvasRenderingContext2D, pts: Point[]) => {
+  if (pts.length < 2) {
+    te('bad length')
+  }
+
+  const path = new Path2D()
+
+  path.moveTo(pts[0][0], pts[0][1])
+  for (let i = 1; i < pts.length; i++) {
+    path.lineTo(pts[i][0], pts[i][1])
+  }
+
+  ctx.save()
+  ctx.setLineDash([5, 5])
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+  ctx.stroke(path)
+  ctx.restore()
+}
+
+const drawDCSegments = (
+  ctx: CanvasRenderingContext2D,
+  pts: Point[],
+  tValue: number,
+) => {
+  const dcPts = getDCPts(pts, tValue)
+
+  drawSegmentLine(ctx, pts)
+  drawSegmentLine(ctx, dcPts)
 }
 
 const destroyPlot = ({
@@ -100,14 +154,12 @@ const createPlot = ({
   width: number
   height: number
 }): IPlot => {
+  let tValue = initialTValue
   let pts: Point[] = Array.from(Array(order + 1)).map(() => [0, 0])
+
   randomizePts(pts, width, height)
 
-  const ctx = canvasRef.getContext('2d')
-
-  if (ctx === null) {
-    throw new Error('Context died')
-  }
+  const ctx = canvasRef.getContext('2d') ?? te('Context died')
 
   const setup = () => {
     canvasRef.width = width * window.devicePixelRatio
@@ -119,6 +171,7 @@ const createPlot = ({
     ctx.clearRect(0, 0, width, height)
     drawGrid(ctx, width, height)
     drawCurve(ctx, width, height, pts)
+    drawDCSegments(ctx, pts, tValue)
   }
 
   const destroy = () => {
@@ -141,6 +194,9 @@ const createPlot = ({
     pts,
     replacePts,
     init,
+    props: {
+      tValue,
+    },
   }
 }
 

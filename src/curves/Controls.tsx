@@ -11,6 +11,7 @@ import { te } from '../utils'
 import { useDispatch } from 'react-redux'
 import { mainSlice } from '../root/store'
 import { randomizePts } from './curves-plot'
+import cn from './Controls.scss'
 
 const validatePts = (pts: unknown): Point[] => {
   if (
@@ -21,7 +22,7 @@ const validatePts = (pts: unknown): Point[] => {
         Array.isArray(pt) && pt.every((ptCoord) => typeof ptCoord === 'number'),
     )
   ) {
-    console.log('Looking good', pts)
+    // looking good
     return pts
   }
 
@@ -40,6 +41,7 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
 
     localStorage.pts = JSON.stringify(plot.pts)
   }, [])
+
   const loadPts = useCallback(() => {
     try {
       const parsedPts = JSON.parse(localStorage.pts)
@@ -65,7 +67,6 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
   }
 
   const tValueInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('changed')
     setTValue(Number(evt.target.value))
   }
 
@@ -73,7 +74,7 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
 
   return (
     <div>
-      <div>
+      <div className={cn.line}>
         <span>{(tValue / tPrecision).toFixed(Math.log10(tPrecision))}</span>
         <input
           type="range"
@@ -83,14 +84,14 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
           value={tValue}
         />
       </div>
-      <div>
+      <div className={cn.line}>
         <span>Segments</span>
         <input type="number" min="0" />
       </div>
-      <div>
+      <div className={cn.line}>
         <button onClick={handleRandomize}>Randomize points</button>
       </div>
-      <div>
+      <div className={cn.line}>
         <button onClick={savePts}>Remember points</button>
         <button onClick={loadPts}>Restore points</button>
       </div>
