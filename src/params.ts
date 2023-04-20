@@ -6,4 +6,4 @@ export const tPrecision = 1000
 /** 0..1 */
 export const initialTValue = 0.5
 
-export const order = 4
+export const order = 10

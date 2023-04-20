@@ -17,10 +17,10 @@ const rndBounds = [
 
 export const randomizePts = (pts: Point[], width: number, height: number) => {
   pts.forEach((pt, idx) => {
-    const rx = rndBounds[idx * 4]
-    const ry = rndBounds[idx * 4 + 1]
-    const rw = rndBounds[idx * 4 + 2]
-    const rh = rndBounds[idx * 4 + 3]
+    const rx = rndBounds[(idx * 4) % rndBounds.length]
+    const ry = rndBounds[(idx * 4 + 1) % rndBounds.length]
+    const rw = rndBounds[(idx * 4 + 2) % rndBounds.length]
+    const rh = rndBounds[(idx * 4 + 3) % rndBounds.length]
     pt[0] = rx * width + rnd(rw * width)
     pt[1] = ry * height + rnd(rh * height)
   })
@@ -65,6 +65,7 @@ const drawCurve = (
   height: number,
   pts: Point[],
 ) => {
+  return
   const path = new Path2D()
 
   const [sp, cp1, cp2, ep] = pts
@@ -218,7 +219,8 @@ const createPlot = ({
 
   randomizePts(pts, width, height)
 
-  const ctx = canvasRef.getContext('2d') ?? te('Context died')
+  const ctx =
+    canvasRef.getContext('2d', { desynchronized: true }) ?? te('Context died')
 
   const setup = () => {
     canvasRef.width = width * window.devicePixelRatio
@@ -226,11 +228,18 @@ const createPlot = ({
     ctx.scale(devicePixelRatio, devicePixelRatio)
   }
 
-  const draw = () => {
+  const drawSync = () => {
     ctx.clearRect(0, 0, width, height)
     drawGrid(ctx, width, height)
     drawCurve(ctx, width, height, pts)
     drawDCSegments(ctx, pts, tValue)
+  }
+
+  let drawCall: number | null = null
+
+  const draw = () => {
+    drawCall !== null && cancelAnimationFrame(drawCall)
+    drawCall = requestAnimationFrame(drawSync)
   }
 
   const destroy = () => {
