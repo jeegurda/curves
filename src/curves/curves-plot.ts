@@ -5,13 +5,14 @@ import { rnd, te } from '../utils'
 // prettier-ignore
 
 // Bounds for randomizer.
-// 4x4 matrix with areas defined by:
+// 4xOrder matrix with areas defined by:
 // x, y, width, height
 const rndBounds = [
   0,    0,    0.2,  0.2,
-  0.5,  0,    0.5,  0.5,
-  0.5,  0.5,  0.5,  0.5,
-  0,    0.8,  0.2,  0.2
+  0.8,  0,    0.2,  0.2,
+  0.5,  0.5,  0.2,  0.2,
+  0.8,  0.8,  0.2,  0.2,
+  0,    0.7,  0.3,  0.3,
 ]
 
 export const randomizePts = (pts: Point[], width: number, height: number) => {
@@ -72,6 +73,7 @@ const drawCurve = (
   const segments = 0
 
   if (segments > 0) {
+    // TODO: segmented render here
   } else {
     path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
   }
@@ -87,12 +89,8 @@ const lerp = (a: Point, b: Point, t: number): Point => {
   return [a[0] * s + b[0] * t, a[1] * s + b[1] * t]
 }
 
-/** Returns points for De Casteljau's algorithm segments extrapolated to tValue
- * @example getDCPts([a, b, c, d]) => [
- *  [e, f, g],
- *  [h, i],
- *  [j],
- * ]
+/** Returns De Casteljau's algorithm segment points for the single set extrapolated to `t` value
+ * @example get([a, b, c, d]) => [ab, bc, cd]
  */
 const getDCPts = (pts: Point[], t: number) => {
   const out = []
@@ -102,7 +100,30 @@ const getDCPts = (pts: Point[], t: number) => {
   return out
 }
 
-const drawSegmentLine = (ctx: CanvasRenderingContext2D, pts: Point[]) => {
+/** Returns all De Casteljau's algorithm segment points extrapolated to `t` value
+ * Outer set (the input set) is NOT extrapolated
+ * @example get([a, b, c, d]) => [
+ *  [a, b, c, d],
+ *  [ab, bc, cd],
+ *  [abc, bcd],
+ *  [abcd],
+ * ]
+ */
+const getAllDCPoints = (pts: Point[], t: number) => {
+  const out = [pts]
+  while (pts.length > 1) {
+    const dcPts = getDCPts(pts, t)
+    out.push(dcPts)
+    pts = dcPts
+  }
+  return out
+}
+
+const drawSegmentLine = (
+  ctx: CanvasRenderingContext2D,
+  pts: Point[],
+  style: string,
+) => {
   if (pts.length < 2) {
     te('bad length')
   }
@@ -116,8 +137,32 @@ const drawSegmentLine = (ctx: CanvasRenderingContext2D, pts: Point[]) => {
 
   ctx.save()
   ctx.setLineDash([5, 5])
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)'
+  ctx.strokeStyle = style
   ctx.stroke(path)
+  ctx.restore()
+}
+
+const ctxStyles = {
+  segmentPoint: 'rgba(255, 255, 255, 0.4)',
+  lastSegmentPoint: 'rgba(255, 255, 255, 0.8)',
+  segmentLine: 'rgba(255, 255, 255, 0.4)',
+}
+
+const drawSegmentPoint = (
+  ctx: CanvasRenderingContext2D,
+  pts: Point[],
+  style: string,
+) => {
+  const path = new Path2D()
+
+  for (let i = 0; i < pts.length; i++) {
+    path.moveTo(pts[i][0], pts[i][1])
+    path.ellipse(pts[i][0], pts[i][1], 3, 3, 0, 0, Math.PI * 2)
+  }
+
+  ctx.save()
+  ctx.fillStyle = style
+  ctx.fill(path)
   ctx.restore()
 }
 
@@ -126,12 +171,24 @@ const drawDCSegments = (
   pts: Point[],
   tValue: number,
 ) => {
-  const dcPts = getDCPts(pts, tValue)
-  const dcPts2 = getDCPts(dcPts, tValue)
+  const segmentPoints = getAllDCPoints(pts, tValue)
 
-  drawSegmentLine(ctx, pts)
-  drawSegmentLine(ctx, dcPts)
-  drawSegmentLine(ctx, dcPts2)
+  segmentPoints.forEach((p, idx) => {
+    // Last set consists of a single point
+    if (idx !== segmentPoints.length - 1) {
+      drawSegmentLine(ctx, p, ctxStyles.segmentLine)
+    }
+    // First set already has points as UI elements
+    if (idx !== 0) {
+      drawSegmentPoint(
+        ctx,
+        p,
+        idx === segmentPoints.length - 1
+          ? ctxStyles.lastSegmentPoint
+          : ctxStyles.segmentPoint,
+      )
+    }
+  })
 }
 
 const destroyPlot = ({

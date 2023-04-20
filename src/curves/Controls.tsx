@@ -1,4 +1,10 @@
-import { ChangeEvent, FunctionComponent, useCallback, useState } from 'react'
+import {
+  ChangeEvent,
+  FunctionComponent,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react'
 import {
   initialTValue,
   order,
@@ -18,8 +24,10 @@ const validatePts = (pts: unknown): Point[] => {
     Array.isArray(pts) &&
     pts.length === order + 1 &&
     pts.every(
-      (pt) =>
-        Array.isArray(pt) && pt.every((ptCoord) => typeof ptCoord === 'number'),
+      (pt: unknown) =>
+        Array.isArray(pt) &&
+        pt.length === 2 &&
+        pt.every((ptCoord) => typeof ptCoord === 'number'),
     )
   ) {
     // looking good
@@ -35,11 +43,13 @@ interface Props {
 
 const Controls: FunctionComponent<Props> = ({ plotRef }) => {
   const dispatch = useDispatch<AppDispatch>()
+  const [lsHasPts, setLSHasPts] = useState(() => 'pts' in localStorage)
 
   const savePts = useCallback(() => {
     const plot = plotRef.current ?? te('Plot ref is not set')
 
     localStorage.pts = JSON.stringify(plot.pts)
+    setLSHasPts(true)
   }, [])
 
   const loadPts = useCallback(() => {
@@ -54,7 +64,10 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
 
       dispatch(mainSlice.actions.syncUi())
     } catch (e) {
+      console.warn('Failed to parse LS string %o: %o', localStorage.pts, e)
+
       delete localStorage.pts
+      setLSHasPts(false)
     }
   }, [])
 
@@ -98,7 +111,9 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
       </div>
       <div className={cn.line}>
         <button onClick={savePts}>Remember points</button>
-        <button onClick={loadPts}>Restore points</button>
+        <button onClick={loadPts} disabled={!lsHasPts}>
+          Restore points
+        </button>
       </div>
     </div>
   )

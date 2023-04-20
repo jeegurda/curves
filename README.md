@@ -40,3 +40,6 @@ $ force_build=prod npm run serve
 - quadric curves
 - add any high-order curves
 - add Legendre-Gauss method for the "true" length
+- build with gh
+- stretch plot
+- scroll plot
