@@ -37,8 +37,8 @@ $ force_build=prod npm run serve
 
 #### Todo:
 
-- quadric curves
+- add curves?
 - add Legendre-Gauss method for the "true" length
 - build with gh
 - stretch plot
-- scroll plot
+- scroll plot (how randomizer bounds should work tho?)

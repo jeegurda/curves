@@ -1,4 +1,4 @@
-import { initialTValue, order } from '../params'
+import { ctxStyles, initialTValue, lerpPoints, order } from '../params'
 import { IPlot, Point } from '../types'
 import { rnd, te } from '../utils'
 
@@ -33,7 +33,7 @@ const drawGrid = (
 ) => {
   const cellSize = 50
   const strokeWidth = 1
-  const strokeStyle = 'rgba(255, 255, 255, 0.05)'
+  const strokeStyle = ctxStyles.gridLine
 
   const rows = Array.from(Array(Math.floor(height / cellSize) + 1))
   const columns = Array.from(Array(Math.floor(width / cellSize) + 1))
@@ -65,22 +65,26 @@ const drawCurve = (
   height: number,
   pts: Point[],
 ) => {
-  return
   const path = new Path2D()
 
-  const [sp, cp1, cp2, ep] = pts
-  path.moveTo(sp[0], sp[1])
-
-  const segments = 0
-
-  if (segments > 0) {
-    // TODO: segmented render here
-  } else {
-    path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
+  // if (nativeDraw) {
+  // const [sp, cp1, cp2, ep] = pts
+  // path.moveTo(sp[0], sp[1])
+  // path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
+  // } else {
+  for (let t = 0; t < lerpPoints; t++) {
+    const [x, y] = getBezierPoint(pts, t / (lerpPoints - 1))
+    if (t === 0) {
+      path.moveTo(x, y)
+    }
+    path.lineTo(x, y)
   }
+  // }
 
   ctx.save()
-  ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+  ctx.lineCap = 'round'
+  ctx.strokeStyle = ctxStyles.curveColor
+  ctx.lineWidth = ctxStyles.curveWidth
   ctx.stroke(path)
   ctx.restore()
 }
@@ -90,10 +94,29 @@ const lerp = (a: Point, b: Point, t: number): Point => {
   return [a[0] * s + b[0] * t, a[1] * s + b[1] * t]
 }
 
-/** Returns De Casteljau's algorithm segment points for the single set extrapolated to `t` value
+/**
+ * Returns final De Casteljau's algorithm segment's point interpolated to `t`
+ * Basically same as 'get all points' but faster and with lower memory footprint
+ * @example get([a, b, c, d]) => abcd
+ */
+const getBezierPoint = (pts: Point[], t: number): Point => {
+  const out = []
+  for (let i = 0; i < pts.length - 1; i++) {
+    out.push(lerp(pts[i], pts[i + 1], t))
+  }
+
+  if (out.length > 1) {
+    return getBezierPoint(out, t)
+  }
+
+  return out[0]
+}
+
+/**
+ * Returns De Casteljau's algorithm segment points for the single set interpolated to `t` value
  * @example get([a, b, c, d]) => [ab, bc, cd]
  */
-const getDCPts = (pts: Point[], t: number) => {
+const getDCPts = (pts: Point[], t: number): Point[] => {
   const out = []
   for (let i = 0; i < pts.length - 1; i++) {
     out.push(lerp(pts[i], pts[i + 1], t))
@@ -101,8 +124,9 @@ const getDCPts = (pts: Point[], t: number) => {
   return out
 }
 
-/** Returns all De Casteljau's algorithm segment points extrapolated to `t` value
- * Outer set (the input set) is NOT extrapolated
+/**
+ * Returns all De Casteljau's algorithm segment points interpolated to `t` value
+ * Outer set (the input set) is NOT interpolated
  * @example get([a, b, c, d]) => [
  *  [a, b, c, d],
  *  [ab, bc, cd],
@@ -110,7 +134,7 @@ const getDCPts = (pts: Point[], t: number) => {
  *  [abcd],
  * ]
  */
-const getAllDCPoints = (pts: Point[], t: number) => {
+const getAllDCPoints = (pts: Point[], t: number): Point[][] => {
   const out = [pts]
   while (pts.length > 1) {
     const dcPts = getDCPts(pts, t)
@@ -141,12 +165,6 @@ const drawSegmentLine = (
   ctx.strokeStyle = style
   ctx.stroke(path)
   ctx.restore()
-}
-
-const ctxStyles = {
-  segmentPoint: 'rgba(255, 255, 255, 0.4)',
-  lastSegmentPoint: 'rgba(255, 255, 255, 0.8)',
-  segmentLine: 'rgba(255, 255, 255, 0.4)',
 }
 
 const drawSegmentPoint = (
