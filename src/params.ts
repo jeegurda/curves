@@ -4,7 +4,7 @@ export const plotHeight = 500
 export const minLerpPts = 2
 export const maxLerpPts = 1000
 
-export const minOrder = 2
+export const minOrder = 1
 export const maxOrder = 100
 
 export const initials = {

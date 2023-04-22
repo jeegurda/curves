@@ -79,7 +79,6 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
 
   const handleRandomize = () => {
     const plot = plotRef.current ?? te('Plot ref is not set')
-
     randomizePts(plot.props.pts, plotWidth, plotHeight)
     plot.draw()
     dispatch(mainSlice.actions.syncUi())

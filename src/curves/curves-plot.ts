@@ -16,7 +16,7 @@ const rndBounds = [
   0,    0.9,  0.1,  0.1,
   0,    0.1,  0.1,  0.1,
   0.2,  0.7,  0.2,  0.2,
-  0.8,  0,    0.3,  0.3
+  0.7,  0,    0.3,  0.3
 ]
 
 /**
@@ -231,7 +231,6 @@ const destroyPlot = ({
   height: number
 }) => {
   ctx.clearRect(0, 0, width, height)
-  // TODO: Clear UI?
 }
 
 const createPlot = ({
@@ -263,6 +262,10 @@ const createPlot = ({
   }
 
   const drawSync = () => {
+    if (props.pts.length < minOrder + 1) {
+      te('not enough points to build a curve')
+    }
+
     ctx.clearRect(0, 0, width, height)
     drawGrid(ctx, width, height)
     drawCurve(ctx, props)
@@ -278,6 +281,7 @@ const createPlot = ({
 
   const destroy = () => {
     destroyPlot({ ctx, width, height })
+    props.pts.splice(0, props.pts.length)
   }
 
   const init = () => {
