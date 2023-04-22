@@ -81,13 +81,13 @@ const drawGrid = (
 
 const drawCurve = (
   ctx: CanvasRenderingContext2D,
-  { pts, lerpPts }: IPlotProps,
+  { pts, lerpPts, connectPts }: IPlotProps,
 ) => {
   const path = new Path2D()
 
   for (let t = 0; t < lerpPts; t++) {
     const [x, y] = getBezierPoint(pts, t / (lerpPts - 1))
-    if (t === 0) {
+    if (!connectPts || t === 0) {
       path.moveTo(x, y)
     }
     path.lineTo(x, y)
@@ -247,6 +247,7 @@ const createPlot = ({
     tValue: initials.tValue,
     pts: Array.from(Array(initials.order + 1)).map(() => [0, 0]),
     lerpPts: initials.lerpPoints,
+    connectPts: true,
   }
 
   randomizePts(props.pts, width, height)
@@ -348,6 +349,12 @@ const createPlot = ({
         }
 
         props.pts.splice(0, props.pts.length, ...v)
+      },
+      get connectPts() {
+        return props.connectPts
+      },
+      set connectPts(v) {
+        props.connectPts = v
       },
     },
   }

@@ -17,7 +17,7 @@ import {
 } from '../params'
 import { AppDispatch, IPlot, Point, RootState } from '../types'
 import { te } from '../utils'
-import { useDispatch, useSelector } from 'react-redux'
+import { connect, useDispatch, useSelector } from 'react-redux'
 import { mainSlice } from '../root/store'
 import { randomizePts } from './curves-plot'
 import cn from './Controls.scss'
@@ -129,6 +129,17 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
     setOrder(plot.props.pts.length - 1)
   }, [syncUI])
 
+  const [connectPts, setConnectPts] = useState(true)
+
+  const handleConnectChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    setConnectPts(evt.target.checked)
+
+    const plot = plotRef.current ?? te('Plot ref is not set')
+
+    plot.props.connectPts = evt.target.checked
+    plot.draw()
+  }
+
   return (
     <div>
       <div className={cn.line}>
@@ -156,6 +167,14 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
           value={lerpPtsValue}
           onInput={handleLerpPtsInput}
         />
+        <label>
+          <span>Connect:</span>
+          <input
+            type="checkbox"
+            checked={connectPts}
+            onChange={handleConnectChange}
+          />
+        </label>
       </div>
       <div className={cn.line}>
         <span>Curve order:</span>

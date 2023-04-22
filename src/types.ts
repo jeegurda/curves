@@ -14,6 +14,7 @@ export interface IPlotProps {
   tValue: number
   lerpPts: number
   pts: Point[]
+  connectPts: boolean
 }
 
 export interface IPlot {
