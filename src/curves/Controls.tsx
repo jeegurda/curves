@@ -2,27 +2,31 @@ import {
   ChangeEvent,
   FunctionComponent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react'
 import {
-  initialTValue,
-  order,
+  initials,
+  minLerpPts,
+  maxLerpPts,
   plotHeight,
   plotWidth,
-  tPrecision,
+  maxOrder,
+  minOrder,
 } from '../params'
-import { AppDispatch, IPlot, Point } from '../types'
+import { AppDispatch, IPlot, Point, RootState } from '../types'
 import { te } from '../utils'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { mainSlice } from '../root/store'
 import { randomizePts } from './curves-plot'
 import cn from './Controls.scss'
+import * as React from 'react'
 
 const validatePts = (pts: unknown): Point[] => {
   if (
     Array.isArray(pts) &&
-    pts.length === order + 1 &&
+    pts.length >= minOrder &&
     pts.every(
       (pt: unknown) =>
         Array.isArray(pt) &&
@@ -44,22 +48,24 @@ interface Props {
 const Controls: FunctionComponent<Props> = ({ plotRef }) => {
   const dispatch = useDispatch<AppDispatch>()
   const [lsHasPts, setLSHasPts] = useState(() => 'pts' in localStorage)
+  const syncUI = useSelector((state: RootState) => state.syncUI)
 
   const savePts = useCallback(() => {
     const plot = plotRef.current ?? te('Plot ref is not set')
 
-    localStorage.pts = JSON.stringify(plot.pts)
+    localStorage.pts = JSON.stringify(plot.props.pts)
     setLSHasPts(true)
   }, [])
 
   const loadPts = useCallback(() => {
     try {
-      const parsedPts = JSON.parse(localStorage.pts)
-
-      validatePts(parsedPts)
+      const parsedPts = validatePts(JSON.parse(localStorage.pts))
 
       const plot = plotRef.current ?? te('Plot ref is not set')
-      plot.replacePts(parsedPts)
+      if (parsedPts.length !== plot.props.pts.length) {
+        plot.setOrder(parsedPts.length - 1)
+      }
+      plot.props.pts = parsedPts
       plot.draw()
 
       dispatch(mainSlice.actions.syncUi())
@@ -74,45 +80,102 @@ const Controls: FunctionComponent<Props> = ({ plotRef }) => {
   const handleRandomize = () => {
     const plot = plotRef.current ?? te('Plot ref is not set')
 
-    randomizePts(plot.pts, plotWidth, plotHeight)
+    randomizePts(plot.props.pts, plotWidth, plotHeight)
     plot.draw()
     dispatch(mainSlice.actions.syncUi())
   }
 
-  const tValueInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTValueInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(evt.target.value)
     setTValue(value)
 
     const plot = plotRef.current ?? te('Plot ref is not set')
-    plot.props.tValue = value / tPrecision
+    plot.props.tValue = value / initials.tPrecision
     plot.draw()
   }
 
-  const [tValue, setTValue] = useState(Math.floor(initialTValue * tPrecision))
+  const handleLerpPtsInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(evt.target.value)
+
+    setLerpPtsValue(value)
+
+    const plot = plotRef.current ?? te('Plot ref is not set')
+    plot.props.lerpPts = value
+    plot.draw()
+  }
+
+  const handleOrderInput = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Number(evt.target.value)
+
+    setOrder(value)
+
+    const plot = plotRef.current ?? te('Plot ref is not set')
+    plot.setOrder(value)
+    plot.draw()
+
+    dispatch(mainSlice.actions.syncUi()) // update control points
+  }
+
+  const [tValue, setTValue] = useState(
+    Math.floor(initials.tValue * initials.tPrecision),
+  )
+  const [lerpPtsValue, setLerpPtsValue] = useState(initials.lerpPoints)
+  const [order, setOrder] = useState(initials.order)
+
+  useEffect(() => {
+    const plot = plotRef.current ?? te('Plot ref is not set')
+
+    // Only order can be changed outside react ui (for now)
+    // thus it requires to be updated via syncUI
+    setOrder(plot.props.pts.length - 1)
+  }, [syncUI])
 
   return (
     <div>
       <div className={cn.line}>
-        <span>{(tValue / tPrecision).toFixed(Math.log10(tPrecision))}</span>
+        <span>
+          t:
+          {(tValue / initials.tPrecision).toFixed(
+            Math.log10(initials.tPrecision),
+          )}
+        </span>
         <input
           type="range"
           min={0}
-          max={tPrecision}
-          onInput={tValueInput}
+          max={initials.tPrecision}
+          onInput={handleTValueInput}
           value={tValue}
         />
       </div>
       <div className={cn.line}>
-        <span>Segments</span>
-        <input type="number" min="0" />
+        <span>Interpolation points:</span>
+        <span>{lerpPtsValue}</span>
+        <input
+          type="range"
+          min={minLerpPts}
+          max={maxLerpPts}
+          value={lerpPtsValue}
+          onInput={handleLerpPtsInput}
+        />
       </div>
       <div className={cn.line}>
-        <button onClick={handleRandomize}>Randomize points</button>
+        <span>Curve order:</span>
+        <span>{order}</span>
+        <input
+          type="range"
+          min={minOrder}
+          max={maxOrder}
+          value={order}
+          onInput={handleOrderInput}
+        />
       </div>
       <div className={cn.line}>
-        <button onClick={savePts}>Remember points</button>
+        <span>Control points: </span>
+        <button onClick={handleRandomize}>Randomize</button>
+        {'\t'}
+        <button onClick={savePts}>Save</button>
         <button onClick={loadPts} disabled={!lsHasPts}>
-          Restore points
+          Load
         </button>
       </div>
     </div>

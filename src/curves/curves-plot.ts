@@ -1,5 +1,5 @@
-import { ctxStyles, initialTValue, lerpPoints, order } from '../params'
-import { IPlot, Point } from '../types'
+import { ctxStyles, initials, maxOrder, minLerpPts, minOrder } from '../params'
+import { IPlot, IPlotProps, Point } from '../types'
 import { rnd, te } from '../utils'
 
 // prettier-ignore
@@ -8,21 +8,41 @@ import { rnd, te } from '../utils'
 // 4xOrder matrix with areas defined by:
 // x, y, width, height
 const rndBounds = [
-  0,    0,    0.2,  0.2,
-  0.8,  0,    0.2,  0.2,
-  0.5,  0.5,  0.2,  0.2,
-  0.8,  0.8,  0.2,  0.2,
-  0,    0.7,  0.3,  0.3,
+  0,    0,    0.1,  0.1,
+  0.5,  0,    0.2,  0.2,
+  0.8,  0.2,  0.2,  0.1,
+  0.8,  0.6,  0.2,  0.1,
+  0.8,  0.8,  0.2,  0.1,
+  0,    0.9,  0.1,  0.1,
+  0,    0.1,  0.1,  0.1,
+  0.2,  0.7,  0.2,  0.2,
+  0.8,  0,    0.3,  0.3
 ]
 
-export const randomizePts = (pts: Point[], width: number, height: number) => {
+/**
+ * Mutates point with random values according to its index and the matrix above
+ */
+const randomizePt = (
+  pt: Point,
+  idx: number,
+  width: number,
+  height: number,
+): void => {
+  const rx = rndBounds[(idx * 4) % rndBounds.length]
+  const ry = rndBounds[(idx * 4 + 1) % rndBounds.length]
+  const rw = rndBounds[(idx * 4 + 2) % rndBounds.length]
+  const rh = rndBounds[(idx * 4 + 3) % rndBounds.length]
+  pt[0] = rx * width + rnd(rw * width)
+  pt[1] = ry * height + rnd(rh * height)
+}
+
+export const randomizePts = (
+  pts: Point[],
+  width: number,
+  height: number,
+): void => {
   pts.forEach((pt, idx) => {
-    const rx = rndBounds[(idx * 4) % rndBounds.length]
-    const ry = rndBounds[(idx * 4 + 1) % rndBounds.length]
-    const rw = rndBounds[(idx * 4 + 2) % rndBounds.length]
-    const rh = rndBounds[(idx * 4 + 3) % rndBounds.length]
-    pt[0] = rx * width + rnd(rw * width)
-    pt[1] = ry * height + rnd(rh * height)
+    randomizePt(pt, idx, width, height)
   })
 }
 
@@ -61,25 +81,17 @@ const drawGrid = (
 
 const drawCurve = (
   ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  pts: Point[],
+  { pts, lerpPts }: IPlotProps,
 ) => {
   const path = new Path2D()
 
-  // if (nativeDraw) {
-  // const [sp, cp1, cp2, ep] = pts
-  // path.moveTo(sp[0], sp[1])
-  // path.bezierCurveTo(cp1[0], cp1[1], cp2[0], cp2[1], ep[0], ep[1])
-  // } else {
-  for (let t = 0; t < lerpPoints; t++) {
-    const [x, y] = getBezierPoint(pts, t / (lerpPoints - 1))
+  for (let t = 0; t < lerpPts; t++) {
+    const [x, y] = getBezierPoint(pts, t / (lerpPts - 1))
     if (t === 0) {
       path.moveTo(x, y)
     }
     path.lineTo(x, y)
   }
-  // }
 
   ctx.save()
   ctx.lineCap = 'round'
@@ -116,7 +128,7 @@ const getBezierPoint = (pts: Point[], t: number): Point => {
  * Returns De Casteljau's algorithm segment points for the single set interpolated to `t` value
  * @example get([a, b, c, d]) => [ab, bc, cd]
  */
-const getDCPts = (pts: Point[], t: number): Point[] => {
+const getDCPoints = (pts: Point[], t: number): Point[] => {
   const out = []
   for (let i = 0; i < pts.length - 1; i++) {
     out.push(lerp(pts[i], pts[i + 1], t))
@@ -135,9 +147,9 @@ const getDCPts = (pts: Point[], t: number): Point[] => {
  * ]
  */
 const getAllDCPoints = (pts: Point[], t: number): Point[][] => {
-  const out = [pts]
+  const out: Point[][] = [pts]
   while (pts.length > 1) {
-    const dcPts = getDCPts(pts, t)
+    const dcPts = getDCPoints(pts, t)
     out.push(dcPts)
     pts = dcPts
   }
@@ -187,8 +199,7 @@ const drawSegmentPoint = (
 
 const drawDCSegments = (
   ctx: CanvasRenderingContext2D,
-  pts: Point[],
-  tValue: number,
+  { pts, tValue }: IPlotProps,
 ) => {
   const segmentPoints = getAllDCPoints(pts, tValue)
 
@@ -232,10 +243,15 @@ const createPlot = ({
   width: number
   height: number
 }): IPlot => {
-  let tValue = initialTValue
-  let pts: Point[] = Array.from(Array(order + 1)).map(() => [0, 0])
+  const props: IPlotProps = {
+    tValue: initials.tValue,
+    pts: Array.from(Array(initials.order + 1)).map(() => [0, 0]),
+    lerpPts: initials.lerpPoints,
+  }
 
-  randomizePts(pts, width, height)
+  randomizePts(props.pts, width, height)
+
+  // let savedPts: Point[] = props.pts.slice()
 
   const ctx =
     canvasRef.getContext('2d', { desynchronized: true }) ?? te('Context died')
@@ -249,8 +265,8 @@ const createPlot = ({
   const drawSync = () => {
     ctx.clearRect(0, 0, width, height)
     drawGrid(ctx, width, height)
-    drawCurve(ctx, width, height, pts)
-    drawDCSegments(ctx, pts, tValue)
+    drawCurve(ctx, props)
+    drawDCSegments(ctx, props)
   }
 
   let drawCall: number | null = null
@@ -269,27 +285,64 @@ const createPlot = ({
     draw()
   }
 
-  const replacePts = (newPts: Point[]) => {
-    pts.splice(0, pts.length, ...newPts)
+  const setOrder = (order: number) => {
+    // n-th order required n+1 points
+    const reqPts = order + 1
+
+    if (reqPts < props.pts.length) {
+      props.pts.splice(reqPts, props.pts.length - reqPts)
+    } else if (reqPts > props.pts.length) {
+      for (let i = props.pts.length; i < reqPts; i++) {
+        const pt: Point = [0, 0]
+        // Use next array item's index as points index for the randomizer
+        randomizePt(pt, props.pts.length, width, height)
+        props.pts.push(pt)
+      }
+    }
   }
 
   return {
     destroy,
     ctx,
     draw,
-    pts,
-    replacePts,
     init,
+    setOrder,
     props: {
       get tValue() {
-        return tValue
+        return props.tValue
       },
       set tValue(v) {
         if (v < 0 || v > 1) {
-          console.warn('t is out of bounds: %o', v)
+          console.warn('t value %o is out of bounds', v)
         }
 
-        tValue = v
+        props.tValue = v
+      },
+
+      get lerpPts() {
+        return props.lerpPts
+      },
+      set lerpPts(v) {
+        if (v < minLerpPts) {
+          console.warn('lerp pts value %o is out of bounds', v)
+        }
+
+        props.lerpPts = v
+      },
+
+      get pts() {
+        return props.pts
+      },
+      set pts(v) {
+        if (v.length !== props.pts.length) {
+          console.warn(
+            "Pts array %o does not match current pts array's %o length. Use setOrder",
+            v,
+            props.pts,
+          )
+        }
+
+        props.pts.splice(0, props.pts.length, ...v)
       },
     },
   }

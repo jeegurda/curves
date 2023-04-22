@@ -10,14 +10,17 @@ export interface MainSliceState {
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
 
-export interface IPlot {
+export interface IPlotProps {
+  tValue: number
+  lerpPts: number
   pts: Point[]
+}
+
+export interface IPlot {
   init: () => void
   draw: () => void
   destroy: () => void
   ctx: CanvasRenderingContext2D
-  replacePts: (newPts: Point[]) => void
-  props: {
-    tValue: number
-  }
+  setOrder: (order: number) => void
+  props: IPlotProps
 }
