@@ -95,6 +95,7 @@ const drawCurve = (
 
   ctx.save()
   ctx.lineCap = 'round'
+  ctx.lineJoin = 'round'
   ctx.strokeStyle = ctxStyles.curveColor
   ctx.lineWidth = ctxStyles.curveWidth
   ctx.stroke(path)
