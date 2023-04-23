@@ -1,3 +1,10 @@
 .line {
   padding: 10px 0;
+  display: grid;
+  grid: auto / 180px 1fr;
+  align-items: center;
+}
+
+.label {
+  white-space: pre-line;
 }

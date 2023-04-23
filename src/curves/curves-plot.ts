@@ -1,4 +1,11 @@
-import { ctxStyles, initials, maxOrder, minLerpPts, minOrder } from '../params'
+import {
+  ctxStyles,
+  initials,
+  maxOrder,
+  minLerpPts,
+  minOrder,
+  minTPrecision,
+} from '../params'
 import { IPlot, IPlotProps, Point } from '../types'
 import { rnd, te } from '../utils'
 
@@ -248,6 +255,7 @@ const createPlot = ({
     pts: Array.from(Array(initials.order + 1)).map(() => [0, 0]),
     lerpPts: initials.lerpPoints,
     connectPts: true,
+    tPrecision: initials.tPrecision,
   }
 
   randomizePts(props.pts, width, height)
@@ -355,6 +363,15 @@ const createPlot = ({
       },
       set connectPts(v) {
         props.connectPts = v
+      },
+      get tPrecision() {
+        return props.tPrecision
+      },
+      set tPrecision(v) {
+        if (v < minTPrecision) {
+          console.warn('t precision must be >= 1: %o', v)
+        }
+        props.tPrecision = v
       },
     },
   }

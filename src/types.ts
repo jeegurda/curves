@@ -13,6 +13,8 @@ export type AppDispatch = typeof store.dispatch
 export interface IPlotProps {
   tValue: number
   lerpPts: number
+  tPrecision: number
+
   pts: Point[]
   connectPts: boolean
 }
