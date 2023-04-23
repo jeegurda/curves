@@ -1,8 +1,6 @@
 ### Bezier curves length
 
-Calculate cubic Bezier curve length by flattening using De Casteljau's algorithm.
-
-It also demonstrates sequential interpolation points. You can traverse (t0).
+Live: https://jeegurda.github.io/curves/
 
 ---
 
@@ -13,7 +11,7 @@ and serve with anything
 ```bash
 $ npm i
 $ npm run build
-$ npx serve ./build
+$ npx serve ./build  # 'serve' not included, just an example
 ```
 
 ### Run it with webpack-dev-serve
@@ -39,6 +37,5 @@ $ force_build=prod npm run serve
 
 - add curves?
 - add Legendre-Gauss method for the "true" length
-- build with gh
 - stretch plot
 - scroll plot (how randomizer bounds should work tho?)
